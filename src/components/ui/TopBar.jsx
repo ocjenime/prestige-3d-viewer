@@ -8,19 +8,19 @@ export default function TopBar() {
   return (
     <div className="top-bar">
       <div className="brand">
-        <div className="brand-logo">P</div>
+        <div className="brand-logo">A</div>
         <div className="brand-text">
-          <h1>Prestige Estates</h1>
-          <span>3D Property Viewer</span>
+          <h1>ARILUX D.O.O. (ZAGRAD)</h1>
+          <span>3D Prikaz Nekretnina</span>
         </div>
       </div>
 
       <div className="top-actions">
         <button className="action-btn" onClick={toggleSidebar}>
-          {sidebarOpen ? '▶ Hide Details' : '◀ Show Details'}
+          {sidebarOpen ? '▶ Sakrij Detalje' : '◀ Prikaži Detalje'}
         </button>
         <button className="action-btn primary">
-          📞 Schedule Viewing
+          Zakaži Obilazak
         </button>
       </div>
     </div>

@@ -29,26 +29,26 @@ export default function Sidebar() {
       </div>
 
       <div className="sidebar-section">
-        <h3>Property Statistics</h3>
+        <h3>Statistika Nekretnine</h3>
         <div className="info-grid">
           <div className="info-item">
-            <div className="label">Floors</div>
+            <div className="label">Spratovi</div>
             <div className="value">{building.stats.floors}</div>
           </div>
           <div className="info-item">
-            <div className="label">Total Units</div>
+            <div className="label">Ukupno Jedinica</div>
             <div className="value">{building.stats.units}</div>
           </div>
           <div className="info-item">
-            <div className="label">Total Area</div>
+            <div className="label">Ukupna Površina</div>
             <div className="value">{building.stats.totalArea}</div>
           </div>
           <div className="info-item">
-            <div className="label">Price Range</div>
+            <div className="label">Cjenovni Raspon</div>
             <div className="value">{building.stats.priceRange}</div>
           </div>
           <div className="info-item">
-            <div className="label">Completion</div>
+            <div className="label">Završetak</div>
             <div className="value">{building.stats.completionDate}</div>
           </div>
           <div className="info-item">
@@ -59,7 +59,7 @@ export default function Sidebar() {
       </div>
 
       <div className="sidebar-section">
-        <h3>Select Floor</h3>
+        <h3>Odabir Sprata</h3>
         <div className="floor-list">
           {displayedFloors.map((floor, idx) => {
             const actualIdx = showAllFloors ? idx : building.floors.length - 8 + idx
@@ -71,7 +71,7 @@ export default function Sidebar() {
                 onClick={() => setSelectedFloor(isActive ? null : actualIdx)}
               >
                 <span className="floor-name">{floor.name}</span>
-                <span className="floor-count">{floor.units.length} units</span>
+                <span className="floor-count">{floor.units.length} jedinica</span>
               </div>
             )
           })}
@@ -92,14 +92,14 @@ export default function Sidebar() {
             }}
             onClick={() => setShowAllFloors(!showAllFloors)}
           >
-            {showAllFloors ? 'Show Less' : `Show All ${building.floors.length} Floors`}
+            {showAllFloors ? 'Prikaži Manje' : `Prikaži Sve ${building.floors.length} Spratova`}
           </button>
         )}
       </div>
 
       {currentFloor && (
         <div className="sidebar-section">
-          <h3>Units on {currentFloor.name}</h3>
+          <h3>Jedinice na {currentFloor.name}</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {currentFloor.units.map((unit) => (
               <div
@@ -113,14 +113,14 @@ export default function Sidebar() {
                 </div>
                 <div className="unit-card-details">
                   <span>{unit.area}</span>
-                  {unit.rooms > 0 && <span>{unit.rooms} rooms</span>}
+                  {unit.rooms > 0 && <span>{unit.rooms} soba</span>}
                   <span>{unit.price}</span>
                 </div>
                 <div style={{ marginTop: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span className={`status-badge ${unit.status}`}>{unit.status}</span>
+                  <span className={`status-badge ${unit.status}`}>{unit.status === 'available' ? 'Dostupno' : unit.status === 'sold' ? 'Prodato' : unit.status === 'reserved' ? 'Rezervisano' : unit.status}</span>
                   {unit.balcony !== undefined && (
                     <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
-                      {unit.balcony ? 'Balcony' : ''}
+                      {unit.balcony ? 'Balkon' : ''}
                     </span>
                   )}
                 </div>
@@ -131,7 +131,7 @@ export default function Sidebar() {
       )}
 
       <div className="sidebar-section">
-        <h3>Material Finish</h3>
+        <h3>Završna Obrada</h3>
         <div className="material-grid">
           {Object.entries(materialPresets).map(([key, preset]) => (
             <div
@@ -152,7 +152,7 @@ export default function Sidebar() {
       </div>
 
       <div className="sidebar-section">
-        <h3>Contact Agent</h3>
+        <h3>Kontakt Agent</h3>
         <div style={{
           background: 'var(--bg-tertiary)',
           borderRadius: 'var(--radius-md)',
@@ -173,12 +173,12 @@ export default function Sidebar() {
             AM
           </div>
           <div style={{ fontWeight: 600, marginBottom: '3px', fontSize: 13 }}>Alexander Mercer</div>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px' }}>Senior Property Consultant</div>
+          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px' }}>Viši Konsultant za Nekretnine</div>
           <button className="action-btn primary" style={{ width: '100%', justifyContent: 'center' }}>
-            +31 20 555 0123
+            +387 61 555 012
           </button>
           <button className="action-btn" style={{ width: '100%', justifyContent: 'center', marginTop: '6px' }}>
-            Send Inquiry
+            Pošalji Upit
           </button>
         </div>
       </div>

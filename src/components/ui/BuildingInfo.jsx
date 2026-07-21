@@ -28,19 +28,19 @@ export default function BuildingInfo() {
       <div className="subtitle">{building.description}</div>
       <div className="info-grid">
         <div className="info-item">
-          <div className="label">Floors</div>
+          <div className="label">Spratovi</div>
           <div className="value">{building.stats.floors}</div>
         </div>
         <div className="info-item">
-          <div className="label">Total Area</div>
+          <div className="label">Ukupna Površina</div>
           <div className="value">{building.stats.totalArea}</div>
         </div>
         <div className="info-item">
-          <div className="label">Price Range</div>
+          <div className="label">Cjenovni Raspon</div>
           <div className="value">{building.stats.priceRange}</div>
         </div>
         <div className="info-item">
-          <div className="label">Completion</div>
+          <div className="label">Završetak</div>
           <div className="value">{building.stats.completionDate}</div>
         </div>
       </div>

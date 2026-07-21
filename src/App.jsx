@@ -34,12 +34,12 @@ class ErrorBoundary extends Component {
             width: 64, height: 64, background: '#C9A84C', borderRadius: 10,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 28, fontWeight: 700, marginBottom: 24,
-          }}>P</div>
+          }}>A</div>
           <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, marginBottom: 12 }}>
-            3D Viewer Error
+            Greška 3D Prikazivača
           </h2>
           <p style={{ color: '#A0A0A8', maxWidth: 400, lineHeight: 1.6, marginBottom: 8 }}>
-            {this.state.error?.message || 'Something went wrong loading the 3D viewer.'}
+            {this.state.error?.message || 'Došlo je do greške prilikom učitavanja 3D prikazivača.'}
           </p>
           <button
             onClick={() => window.location.reload()}
@@ -49,7 +49,7 @@ class ErrorBoundary extends Component {
               cursor: 'pointer', fontFamily: "'Inter', sans-serif",
             }}
           >
-            Retry
+            Pokušaj Ponovo
           </button>
         </div>
       )

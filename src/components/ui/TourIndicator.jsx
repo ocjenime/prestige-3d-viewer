@@ -7,8 +7,8 @@ export default function TourIndicator() {
   return (
     <div className="tour-indicator" onClick={toggleTourMode} style={{ cursor: 'pointer' }}>
       <div className="tour-dot" />
-      <span>Virtual Tour Active</span>
-      <span style={{ fontWeight: 400, opacity: 0.7 }}>— Click to stop</span>
+      <span>Virtuelni Obilazak Aktivan</span>
+      <span style={{ fontWeight: 400, opacity: 0.7 }}>— Kliknite da zaustavite</span>
     </div>
   )
 }

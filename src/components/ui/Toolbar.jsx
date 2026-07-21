@@ -2,13 +2,13 @@ import React from 'react'
 import useStore from '../../stores/useStore'
 
 const tools = [
-  { id: 'orbit', icon: '🔄', label: 'Orbit View', action: 'setActiveTool' },
-  { id: 'floorplan', icon: '📋', label: 'Floor Plan', action: 'toggleFloorPlan' },
-  { id: 'measure', icon: '📏', label: 'Measure', action: 'toggleMeasurements' },
-  { id: 'night', icon: '🌙', label: 'Night Mode', action: 'toggleNightMode' },
-  { id: 'info', icon: 'ℹ️', label: 'Building Info', action: 'toggleBuildingInfo' },
-  { id: 'vr', icon: '🥽', label: 'VR Mode', action: 'toggleVrMode' },
-  { id: 'tour', icon: '🎬', label: 'Virtual Tour', action: 'toggleTourMode' },
+  { id: 'orbit', icon: '🔄', label: 'Prikaz Okretanja', action: 'setActiveTool' },
+  { id: 'floorplan', icon: '📋', label: 'Tlocrt', action: 'toggleFloorPlan' },
+  { id: 'measure', icon: '📏', label: 'Mjerenje', action: 'toggleMeasurements' },
+  { id: 'night', icon: '🌙', label: 'Noćni Režim', action: 'toggleNightMode' },
+  { id: 'info', icon: 'ℹ️', label: 'Informacije o Zgradi', action: 'toggleBuildingInfo' },
+  { id: 'vr', icon: '🥽', label: 'VR Režim', action: 'toggleVrMode' },
+  { id: 'tour', icon: '🎬', label: 'Virtuelni Obilazak', action: 'toggleTourMode' },
 ]
 
 export default function Toolbar() {
@@ -24,7 +24,6 @@ export default function Toolbar() {
   const toggleBuildingInfo = useStore((s) => s.toggleBuildingInfo)
   const toggleVrMode = useStore((s) => s.toggleVrMode)
   const toggleTourMode = useStore((s) => s.toggleTourMode)
-  const addMeasurementPoint = useStore((s) => s.addMeasurementPoint)
 
   const isActive = (tool) => {
     switch (tool.id) {

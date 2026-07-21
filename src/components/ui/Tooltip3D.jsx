@@ -2,6 +2,13 @@ import React from 'react'
 import useStore from '../../stores/useStore'
 import { buildings } from '../../data/buildings'
 
+const statusMap = {
+  available: 'Dostupno',
+  sold: 'Prodato',
+  reserved: 'Rezervisano',
+  common: 'Zajedničko',
+}
+
 export default function Tooltip3D() {
   const hoveredUnit = useStore((s) => s.hoveredUnit)
   const selectedUnit = useStore((s) => s.selectedUnit)
@@ -40,9 +47,9 @@ export default function Tooltip3D() {
           </span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <p>Area: {unitInfo.area}</p>
-          {unitInfo.rooms > 0 && <p>Rooms: {unitInfo.rooms}</p>}
-          <p>Price: {unitInfo.price}</p>
+          <p>Površina: {unitInfo.area}</p>
+          {unitInfo.rooms > 0 && <p>Sobe: {unitInfo.rooms}</p>}
+          <p>Cijena: {unitInfo.price}</p>
         </div>
         <div style={{
           marginTop: 8,
@@ -56,7 +63,7 @@ export default function Tooltip3D() {
           color: statusColors[unitInfo.status] || '#666',
           textAlign: 'center',
         }}>
-          {unitInfo.status}
+          {statusMap[unitInfo.status] || unitInfo.status}
         </div>
       </div>
     </div>

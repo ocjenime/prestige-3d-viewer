@@ -41,9 +41,6 @@ class ErrorBoundary extends Component {
           <p style={{ color: '#A0A0A8', maxWidth: 400, lineHeight: 1.6, marginBottom: 8 }}>
             {this.state.error?.message || 'Something went wrong loading the 3D viewer.'}
           </p>
-          <p style={{ color: '#6B6B73', fontSize: 12, maxWidth: 400, lineHeight: 1.6, marginBottom: 24 }}>
-            Try enabling hardware acceleration in Chrome settings, or use Firefox/Edge.
-          </p>
           <button
             onClick={() => window.location.reload()}
             style={{
@@ -65,17 +62,18 @@ function ThreeCanvas() {
   const showBuildingInfo = useStore((s) => s.showBuildingInfo)
   const hoveredUnit = useStore((s) => s.hoveredUnit)
   const tourMode = useStore((s) => s.tourMode)
+  const selectedUnit = useStore((s) => s.selectedUnit)
 
   return (
     <div className="app-container">
       <div className="canvas-container">
         <Canvas
           shadows
-          camera={{ position: [18, 12, 18], fov: 50, near: 0.1, far: 200 }}
-          gl={{ antialias: true, alpha: false, powerPreference: 'default' }}
-          dpr={[1, 1.5]}
+          camera={{ position: [45, 32, 45], fov: 40, near: 0.1, far: 500 }}
+          gl={{ antialias: true, alpha: false, powerPreference: 'default', toneMapping: 4, toneMappingExposure: 1.1 }}
+          dpr={[1, 2]}
           onCreated={({ gl }) => {
-            gl.setClearColor('#E8E8E8')
+            gl.setClearColor('#87CEEB')
           }}
         >
           <Suspense fallback={null}>
@@ -88,6 +86,7 @@ function ThreeCanvas() {
         <BuildingSelector />
         {showBuildingInfo && <BuildingInfo />}
         {hoveredUnit && <Tooltip3D />}
+        {selectedUnit && !hoveredUnit && <Tooltip3D />}
         {tourMode && <TourIndicator />}
       </div>
 
@@ -100,7 +99,7 @@ export default function App() {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoaded(true), 1500)
+    const timer = setTimeout(() => setLoaded(true), 1800)
     return () => clearTimeout(timer)
   }, [])
 

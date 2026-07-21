@@ -6,159 +6,240 @@ import { materialPresets } from '../../data/buildings'
 
 const _lerpTarget = new THREE.Vector3()
 
-function WindowRow({ width, z, y, buildingWidth, materialPreset, isNight }) {
-  const preset = materialPresets[materialPreset]
-  const windowWidth = 1.2
-  const windowHeight = 1.6
-  const gap = 0.8
-  const count = Math.floor(buildingWidth / (windowWidth + gap))
-  const startX = -(count * (windowWidth + gap)) / 2
-
-  return (
-    <group position={[0, y, z]}>
-      {Array.from({ length: count }, (_, i) => (
-        <mesh key={i} position={[startX + i * (windowWidth + gap) + windowWidth / 2, 0, 0]} castShadow receiveShadow>
-          <boxGeometry args={[windowWidth, windowHeight, 0.08]} />
-          <meshPhysicalMaterial
-            color={isNight ? '#FFD080' : preset.glass}
-            metalness={0.1}
-            roughness={0.02}
-            transmission={isNight ? 0 : 0.7}
-            thickness={0.5}
-            ior={1.5}
-            transparent
-            opacity={isNight ? 0.95 : 0.5}
-            envMapIntensity={2.0}
-            emissive={isNight ? '#FFD080' : '#000000'}
-            emissiveIntensity={isNight ? 0.5 : 0}
-            clearcoat={1.0}
-            clearcoatRoughness={0.05}
-          />
-        </mesh>
-      ))}
-      {z > 0 && Array.from({ length: count }, (_, i) => (
-        <mesh
-          key={`frame-h-${i}`}
-          position={[startX + i * (windowWidth + gap) + windowWidth / 2, windowHeight / 2, 0.04]}
-        >
-          <boxGeometry args={[windowWidth + 0.06, 0.05, 0.06]} />
-          <meshStandardMaterial color="#2A2A2A" metalness={0.8} roughness={0.2} />
-        </mesh>
-      ))}
-      {z > 0 && Array.from({ length: count }, (_, i) => (
-        <mesh
-          key={`frame-v-${i}`}
-          position={[startX + i * (windowWidth + gap) + windowWidth / 2, 0, 0.04]}
-        >
-          <boxGeometry args={[0.05, windowHeight + 0.06, 0.06]} />
-          <meshStandardMaterial color="#2A2A2A" metalness={0.8} roughness={0.2} />
-        </mesh>
-      ))}
-    </group>
-  )
-}
-
-function Balcony({ width, depth, materialPreset }) {
-  const preset = materialPresets[materialPreset]
-  return (
-    <group>
-      <mesh position={[0, -0.02, depth / 2 + 0.4]} receiveShadow castShadow>
-        <boxGeometry args={[width * 0.85, 0.12, 0.8]} />
-        <meshPhysicalMaterial color="#D0D0D0" roughness={0.4} metalness={0.1} clearcoat={0.3} clearcoatRoughness={0.4} />
-      </mesh>
-      <mesh position={[0, 0.4, depth / 2 + 0.8]} castShadow>
-        <boxGeometry args={[width * 0.85, 0.85, 0.04]} />
-        <meshPhysicalMaterial color="#88BBDD" metalness={0.05} roughness={0.05} transmission={0.6} thickness={0.3} ior={1.5} transparent opacity={0.4} clearcoat={1.0} clearcoatRoughness={0.05} />
-      </mesh>
-      {[-1, 0, 1].map(i => (
-        <mesh key={i} position={[i * (width * 0.85) / 2, 0.2, depth / 2 + 0.8]} castShadow>
-          <boxGeometry args={[0.06, 0.8, 0.06]} />
-          <meshStandardMaterial color="#444444" metalness={0.7} roughness={0.3} />
-        </mesh>
-      ))}
-    </group>
-  )
-}
-
-function Floor({ level, width, depth, materialPreset, isNight, isSelected }) {
-  const preset = materialPresets[materialPreset]
-  const floorHeight = 3.2
-  const y = level * floorHeight
+function WindowPane({ x, y, z, w, h, isNight, glass, windowId, unitStatus, isUnitSelected }) {
   const [hovered, setHovered] = useState(false)
+  const setHoveredUnit = useStore((s) => s.setHoveredUnit)
+  const setSelectedUnit = useStore((s) => s.setSelectedUnit)
+  const selectedUnit = useStore((s) => s.selectedUnit)
+  const buildings = useStore.getState ? null : null
 
-  const buildingColor = useMemo(() => {
-    if (isSelected) return preset.accent
-    if (hovered) return '#C9A84C'
-    return preset.wall
-  }, [isSelected, hovered, preset])
+  const statusColor = unitStatus === 'available' ? '#22C55E' : unitStatus === 'sold' ? '#EF4444' : unitStatus === 'reserved' ? '#FBBF24' : null
+  const isSelected = selectedUnit === windowId
 
-  const handlePointerOver = useCallback((e) => {
+  const handleClick = useCallback((e) => {
+    e.stopPropagation()
+    if (windowId && unitStatus && unitStatus !== 'common') {
+      setSelectedUnit(isSelected ? null : windowId)
+    }
+  }, [windowId, unitStatus, isSelected, setSelectedUnit])
+
+  const handleOver = useCallback((e) => {
     e.stopPropagation()
     setHovered(true)
     document.body.style.cursor = 'pointer'
-  }, [])
+    if (windowId && unitStatus) {
+      setHoveredUnit({ id: windowId, status: unitStatus })
+    }
+  }, [windowId, unitStatus, setHoveredUnit])
 
-  const handlePointerOut = useCallback(() => {
+  const handleOut = useCallback(() => {
     setHovered(false)
     document.body.style.cursor = 'default'
-  }, [])
+    setHoveredUnit(null)
+  }, [setHoveredUnit])
 
-  const showBalcony = level > 0 && level % 3 === 0
+  const emissiveColor = isNight ? '#FFD080' : (isSelected ? '#C9A84C' : (hovered ? '#C9A84C' : '#000000'))
+  const emissiveStrength = isNight ? 0.6 : (isSelected ? 0.3 : (hovered ? 0.15 : 0))
+
+  return (
+    <group>
+      <mesh
+        position={[x, y, z]}
+        castShadow
+        receiveShadow
+        onClick={handleClick}
+        onPointerOver={handleOver}
+        onPointerOut={handleOut}
+      >
+        <boxGeometry args={[w, h, 0.06]} />
+        <meshPhysicalMaterial
+          color={isNight ? '#FFD080' : glass}
+          metalness={0.1}
+          roughness={0.02}
+          transmission={isNight ? 0 : 0.7}
+          thickness={0.5}
+          ior={1.5}
+          transparent
+          opacity={isNight ? (isSelected ? 1 : 0.85) : (isSelected ? 0.7 : 0.45)}
+          envMapIntensity={2.5}
+          emissive={emissiveColor}
+          emissiveIntensity={emissiveStrength}
+          clearcoat={1.0}
+          clearcoatRoughness={0.05}
+        />
+      </mesh>
+      {isSelected && statusColor && (
+        <mesh position={[x, y - h / 2 - 0.15, z + 0.06]}>
+          <boxGeometry args={[w * 0.5, 0.08, 0.02]} />
+          <meshBasicMaterial color={statusColor} />
+        </mesh>
+      )}
+    </group>
+  )
+}
+
+function WindowRow({ width, z, y, buildingWidth, materialPreset, isNight, floorIndex, buildingData }) {
+  const preset = materialPresets[materialPreset]
+  const windowWidth = 1.4
+  const windowHeight = 1.8
+  const gap = 0.6
+  const count = Math.floor(buildingWidth / (windowWidth + gap))
+  const startX = -(count * (windowWidth + gap)) / 2
+  const units = buildingData?.floors?.[floorIndex]?.units || []
+
+  return (
+    <group position={[0, y, z]}>
+      {Array.from({ length: count }, (_, i) => {
+        const unitIdx = i % units.length
+        const unit = units[unitIdx] || null
+        const wId = unit ? unit.id : null
+        const wStatus = unit ? unit.status : null
+        return (
+          <React.Fragment key={i}>
+            <WindowPane
+              x={startX + i * (windowWidth + gap) + windowWidth / 2}
+              y={0}
+              z={0}
+              w={windowWidth}
+              h={windowHeight}
+              isNight={isNight}
+              glass={preset.glass}
+              windowId={wId}
+              unitStatus={wStatus}
+            />
+            <mesh position={[startX + i * (windowWidth + gap) + windowWidth / 2, windowHeight / 2 + 0.01, 0.035]}>
+              <boxGeometry args={[windowWidth + 0.06, 0.04, 0.05]} />
+              <meshPhysicalMaterial color="#1A1A1E" metalness={0.85} roughness={0.15} clearcoat={0.6} />
+            </mesh>
+            <mesh position={[startX + i * (windowWidth + gap) + windowWidth / 2, -windowHeight / 2 - 0.01, 0.035]}>
+              <boxGeometry args={[windowWidth + 0.06, 0.04, 0.05]} />
+              <meshPhysicalMaterial color="#1A1A1E" metalness={0.85} roughness={0.15} clearcoat={0.6} />
+            </mesh>
+            <mesh position={[startX + i * (windowWidth + gap) - gap / 2 + 0.01, 0, 0.035]}>
+              <boxGeometry args={[0.04, windowHeight + 0.06, 0.05]} />
+              <meshPhysicalMaterial color="#1A1A1E" metalness={0.85} roughness={0.15} clearcoat={0.6} />
+            </mesh>
+            <mesh position={[startX + i * (windowWidth + gap) + windowWidth + gap / 2 - 0.01, 0, 0.035]}>
+              <boxGeometry args={[0.04, windowHeight + 0.06, 0.05]} />
+              <meshPhysicalMaterial color="#1A1A1E" metalness={0.85} roughness={0.15} clearcoat={0.6} />
+            </mesh>
+          </React.Fragment>
+        )
+      })}
+    </group>
+  )
+}
+
+function Balcony({ x, width, materialPreset }) {
+  const preset = materialPresets[materialPreset]
+  return (
+    <group position={[x, 0, 0]}>
+      <mesh position={[0, -0.04, 0.55]} receiveShadow castShadow>
+        <boxGeometry args={[width - 0.2, 0.1, 1.0]} />
+        <meshPhysicalMaterial color="#E0E0E0" roughness={0.35} metalness={0.08} clearcoat={0.4} clearcoatRoughness={0.3} />
+      </mesh>
+      <mesh position={[0, 0.42, 1.0]} castShadow>
+        <boxGeometry args={[width - 0.2, 0.88, 0.03]} />
+        <meshPhysicalMaterial color="#C8E0F0" metalness={0.02} roughness={0.05} transmission={0.65} thickness={0.3} ior={1.5} transparent opacity={0.35} clearcoat={1.0} clearcoatRoughness={0.05} />
+      </mesh>
+      {[-1, 0, 1].map(i => (
+        <mesh key={i} position={[i * (width - 0.2) / 2, 0.2, 1.0]} castShadow>
+          <boxGeometry args={[0.05, 0.85, 0.05]} />
+          <meshPhysicalMaterial color="#2A2A2E" metalness={0.8} roughness={0.2} clearcoat={0.5} />
+        </mesh>
+      ))}
+      <mesh position={[0, -0.04, 1.0]} castShadow>
+        <boxGeometry args={[width - 0.2, 0.05, 0.05]} />
+        <meshPhysicalMaterial color="#2A2A2E" metalness={0.8} roughness={0.2} />
+      </mesh>
+    </group>
+  )
+}
+
+function Floor({ level, width, depth, materialPreset, isNight, buildingData }) {
+  const preset = materialPresets[materialPreset]
+  const floorHeight = 3.2
+  const y = level * floorHeight
+  const selectedFloor = useStore((s) => s.selectedFloor)
+  const setSelectedFloor = useStore((s) => s.setSelectedFloor)
+  const isHighlighted = selectedFloor === level
+
+  const buildingColor = useMemo(() => {
+    if (isHighlighted) return preset.accent
+    return preset.wall
+  }, [isHighlighted, preset])
+
+  const handleClick = useCallback((e) => {
+    e.stopPropagation()
+    setSelectedFloor(selectedFloor === level ? null : level)
+  }, [level, selectedFloor, setSelectedFloor])
+
+  const showBalcony = level > 0 && (level % 3 === 0 || level % 5 === 0)
+  const balconySpacing = width / 4
 
   return (
     <group position={[0, y, 0]}>
-      <mesh
-        castShadow
-        receiveShadow
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-      >
-        <boxGeometry args={[width, floorHeight - 0.05, depth]} />
+      <mesh castShadow receiveShadow onClick={handleClick}>
+        <boxGeometry args={[width, floorHeight - 0.04, depth]} />
         <meshPhysicalMaterial
           color={buildingColor}
           roughness={preset.wallRoughness ?? 0.6}
           metalness={preset.wallMetalness ?? 0.02}
           clearcoat={preset.clearcoat ?? 0.2}
-          clearcoatRoughness={0.4}
-          envMapIntensity={1.0}
+          clearcoatRoughness={0.35}
+          envMapIntensity={1.2}
         />
       </mesh>
 
       <WindowRow
         width={width}
-        z={depth / 2 + 0.01}
+        z={depth / 2 + 0.02}
         y={0}
         buildingWidth={width}
         materialPreset={materialPreset}
         isNight={isNight}
+        floorIndex={level}
+        buildingData={buildingData}
       />
       <WindowRow
         width={width}
-        z={-depth / 2 - 0.01}
+        z={-depth / 2 - 0.02}
         y={0}
         buildingWidth={width}
         materialPreset={materialPreset}
         isNight={isNight}
+        floorIndex={level}
+        buildingData={buildingData}
       />
 
-      {showBalcony && (
-        <Balcony width={width} depth={depth} materialPreset={materialPreset} />
-      )}
+      {showBalcony && Array.from({ length: 3 }, (_, i) => (
+        <Balcony
+          key={i}
+          x={-balconySpacing + i * balconySpacing}
+          width={balconySpacing * 0.85}
+          materialPreset={materialPreset}
+        />
+      ))}
 
       {level % 5 === 0 && level > 0 && (
-        <group>
-          <mesh position={[0, -floorHeight / 2 + 0.05, 0]} castShadow receiveShadow>
-            <boxGeometry args={[width + 0.4, 0.2, depth + 0.4]} />
-            <meshPhysicalMaterial
-              color={preset.accent}
-              roughness={0.3}
-              metalness={0.4}
-              clearcoat={0.6}
-              clearcoatRoughness={0.2}
-              envMapIntensity={1.5}
-            />
-          </mesh>
-        </group>
+        <mesh position={[0, -floorHeight / 2 + 0.03, 0]} castShadow receiveShadow>
+          <boxGeometry args={[width + 0.3, 0.15, depth + 0.3]} />
+          <meshPhysicalMaterial
+            color={preset.accent}
+            roughness={0.25}
+            metalness={0.45}
+            clearcoat={0.7}
+            clearcoatRoughness={0.15}
+            envMapIntensity={1.8}
+          />
+        </mesh>
+      )}
+
+      {isHighlighted && (
+        <mesh position={[0, -floorHeight / 2 - 0.02, depth / 2 + 0.03]}>
+          <planeGeometry args={[width, floorHeight - 0.06]} />
+          <meshBasicMaterial color="#C9A84C" transparent opacity={0.06} side={THREE.DoubleSide} />
+        </mesh>
       )}
     </group>
   )
@@ -166,33 +247,27 @@ function Floor({ level, width, depth, materialPreset, isNight, isSelected }) {
 
 const MemoFloor = React.memo(Floor)
 
-function SelectionOutline({ width, height, depth }) {
-  const obj = useMemo(() => {
-    const geo = new THREE.EdgesGeometry(
-      new THREE.BoxGeometry(width, height, depth)
-    )
-    const mat = new THREE.LineBasicMaterial({ color: '#C9A84C', transparent: true, opacity: 0.6 })
-    return new THREE.LineSegments(geo, mat)
-  }, [width, height, depth])
-
-  return <primitive object={obj} />
-}
-
 function RooftopDetails({ width, depth, isNight }) {
   return (
     <group position={[0, 0.2, 0]}>
-      <mesh position={[0, 0, 0]} castShadow>
-        <boxGeometry args={[width * 0.3, 0.6, depth * 0.3]} />
-        <meshPhysicalMaterial color="#666666" roughness={0.6} metalness={0.3} />
+      <mesh position={[0, 0.4, 0]} castShadow>
+        <boxGeometry args={[width * 0.35, 0.8, depth * 0.35]} />
+        <meshPhysicalMaterial color="#555555" roughness={0.5} metalness={0.35} clearcoat={0.2} />
       </mesh>
-      <mesh position={[width * 0.25, 0, -depth * 0.2]} castShadow>
-        <cylinderGeometry args={[0.3, 0.3, 1.0, 12]} />
-        <meshPhysicalMaterial color="#888888" roughness={0.3} metalness={0.6} clearcoat={0.5} />
+      <mesh position={[width * 0.22, 0.3, -depth * 0.18]} castShadow>
+        <cylinderGeometry args={[0.25, 0.25, 0.8, 12]} />
+        <meshPhysicalMaterial color="#777777" roughness={0.25} metalness={0.65} clearcoat={0.6} />
       </mesh>
-      {!isNight && (
-        <>
-          <pointLight position={[0, 0.5, 0]} intensity={0.1} color="#FFFFFF" distance={5} />
-        </>
+      <mesh position={[-width * 0.2, 0.25, depth * 0.2]} castShadow>
+        <boxGeometry args={[0.8, 0.5, 0.8]} />
+        <meshPhysicalMaterial color="#4A4A4A" roughness={0.6} metalness={0.3} />
+      </mesh>
+      <mesh position={[0, -0.1, 0]} receiveShadow>
+        <boxGeometry args={[width + 0.6, 0.2, depth + 0.6]} />
+        <meshPhysicalMaterial color="#5A5A5A" roughness={0.7} metalness={0.15} />
+      </mesh>
+      {isNight && (
+        <pointLight position={[0, 1, 0]} intensity={0.3} color="#FFD080" distance={8} decay={2} />
       )}
     </group>
   )
@@ -204,77 +279,58 @@ export default function Building({ building, index }) {
   const materialPreset = useStore((s) => s.materialPreset)
   const isNightMode = useStore((s) => s.isNightMode)
   const setSelectedBuilding = useStore((s) => s.setSelectedBuilding)
-  const toggleBuildingInfo = useStore((s) => s.toggleBuildingInfo)
-  const selectedFloor = useStore((s) => s.selectedFloor)
 
   const isSelected = selectedBuilding === index
 
   const buildingConfig = useMemo(() => {
     const configs = {
-      'tower-a': { width: 12, depth: 10, floors: 25 },
-      'villa-b': { width: 14, depth: 12, floors: 3 },
-      'complex-c': { width: 16, depth: 14, floors: 18 },
+      'tower-a': { width: 12, depth: 10 },
+      'villa-b': { width: 14, depth: 12 },
+      'complex-c': { width: 16, depth: 14 },
     }
-    return configs[building.id] || { width: 12, depth: 10, floors: 10 }
+    return configs[building.id] || { width: 12, depth: 10 }
   }, [building.id])
 
   useFrame(() => {
     if (groupRef.current) {
-      const targetScale = isSelected ? 1 : 0.95
+      const targetScale = isSelected ? 1 : 0.97
       _lerpTarget.set(targetScale, targetScale, targetScale)
-      groupRef.current.scale.lerp(_lerpTarget, 0.05)
+      groupRef.current.scale.lerp(_lerpTarget, 0.04)
     }
   })
 
   const handleClick = useCallback((e) => {
     e.stopPropagation()
     setSelectedBuilding(index)
-    if (isSelected) toggleBuildingInfo()
-  }, [index, isSelected, setSelectedBuilding, toggleBuildingInfo])
-
-  const floorCount = isSelected ? building.floors.length : Math.min(4, building.floors.length)
-  const outlineHeight = building.floors.length * 3.2
+  }, [index, setSelectedBuilding])
 
   return (
     <group ref={groupRef} position={building.position}>
       <group onClick={handleClick}>
-        {Array.from({ length: floorCount }, (_, i) => {
-          const shouldHighlight = isSelected && selectedFloor === i
-          return (
-            <MemoFloor
-              key={i}
-              level={i}
-              width={buildingConfig.width}
-              depth={buildingConfig.depth}
-              materialPreset={materialPreset}
-              isNight={isNightMode}
-              isSelected={shouldHighlight}
-            />
-          )
-        })}
+        {Array.from({ length: building.floors.length }, (_, i) => (
+          <MemoFloor
+            key={i}
+            level={i}
+            width={buildingConfig.width}
+            depth={buildingConfig.depth}
+            materialPreset={materialPreset}
+            isNight={isNightMode}
+            buildingData={building}
+          />
+        ))}
 
         <mesh position={[0, -0.5, 0]} receiveShadow castShadow>
-          <boxGeometry args={[buildingConfig.width + 1, 1, buildingConfig.depth + 1]} />
+          <boxGeometry args={[buildingConfig.width + 1.2, 1, buildingConfig.depth + 1.2]} />
           <meshPhysicalMaterial
-            color="#3A3A3A"
-            roughness={0.7}
-            metalness={0.08}
-            clearcoat={0.15}
-            clearcoatRoughness={0.6}
+            color="#333333"
+            roughness={0.65}
+            metalness={0.1}
+            clearcoat={0.2}
+            clearcoatRoughness={0.5}
           />
         </mesh>
 
-        {isSelected && (
-          <group position={[0, outlineHeight / 2, 0]}>
-            <SelectionOutline
-              width={buildingConfig.width + 0.5}
-              height={outlineHeight}
-              depth={buildingConfig.depth + 0.5}
-            />
-          </group>
-        )}
-
-        <group position={[0, building.floors.length * 3.2 + 0.2, 0]}>
+        <group position={[0, building.floors.length * 3.2, 0]}>
           <RooftopDetails
             width={buildingConfig.width}
             depth={buildingConfig.depth}

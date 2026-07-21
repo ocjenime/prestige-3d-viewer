@@ -17,7 +17,9 @@ export default function Sidebar() {
 
   const displayedFloors = showAllFloors
     ? building.floors
-    : building.floors.slice(-6)
+    : building.floors.slice(-8)
+
+  const currentFloor = selectedFloor !== null ? building.floors[selectedFloor] : null
 
   return (
     <div className={`sidebar ${sidebarOpen ? '' : 'collapsed'}`}>
@@ -57,15 +59,16 @@ export default function Sidebar() {
       </div>
 
       <div className="sidebar-section">
-        <h3>Floor Selection</h3>
+        <h3>Select Floor</h3>
         <div className="floor-list">
           {displayedFloors.map((floor, idx) => {
-            const actualIdx = showAllFloors ? idx : building.floors.length - 6 + idx
+            const actualIdx = showAllFloors ? idx : building.floors.length - 8 + idx
+            const isActive = selectedFloor === actualIdx
             return (
               <div
                 key={actualIdx}
-                className={`floor-item ${selectedFloor === actualIdx ? 'active' : ''}`}
-                onClick={() => setSelectedFloor(selectedFloor === actualIdx ? null : actualIdx)}
+                className={`floor-item ${isActive ? 'active' : ''}`}
+                onClick={() => setSelectedFloor(isActive ? null : actualIdx)}
               >
                 <span className="floor-name">{floor.name}</span>
                 <span className="floor-count">{floor.units.length} units</span>
@@ -73,17 +76,17 @@ export default function Sidebar() {
             )
           })}
         </div>
-        {building.floors.length > 6 && (
+        {building.floors.length > 8 && (
           <button
             style={{
               width: '100%',
-              padding: '8px',
-              marginTop: '8px',
+              padding: '6px',
+              marginTop: '6px',
               background: 'var(--bg-tertiary)',
               border: '1px solid var(--border)',
               borderRadius: 'var(--radius-sm)',
               color: 'var(--text-secondary)',
-              fontSize: '12px',
+              fontSize: '11px',
               cursor: 'pointer',
               fontFamily: 'var(--font-body)',
             }}
@@ -94,30 +97,30 @@ export default function Sidebar() {
         )}
       </div>
 
-      {selectedFloor !== null && (
+      {currentFloor && (
         <div className="sidebar-section">
-          <h3>Units on {building.floors[selectedFloor].name}</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {building.floors[selectedFloor].units.map((unit) => (
+          <h3>Units on {currentFloor.name}</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {currentFloor.units.map((unit) => (
               <div
                 key={unit.id}
                 className={`unit-card ${selectedUnit === unit.id ? 'selected' : ''}`}
                 onClick={() => setSelectedUnit(selectedUnit === unit.id ? null : unit.id)}
               >
                 <div className="unit-card-header">
-                  <h4>{unit.type.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</h4>
+                  <h4>{unit.type.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</h4>
                   <span className="unit-id">{unit.id}</span>
                 </div>
                 <div className="unit-card-details">
-                  <span>📐 {unit.area}</span>
-                  {unit.rooms > 0 && <span>🛏 {unit.rooms} rooms</span>}
-                  <span>💰 {unit.price}</span>
+                  <span>{unit.area}</span>
+                  {unit.rooms > 0 && <span>{unit.rooms} rooms</span>}
+                  <span>{unit.price}</span>
                 </div>
-                <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ marginTop: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span className={`status-badge ${unit.status}`}>{unit.status}</span>
                   {unit.balcony !== undefined && (
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                      {unit.balcony ? '🌿 Balcony' : ''}
+                    <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+                      {unit.balcony ? 'Balcony' : ''}
                     </span>
                   )}
                 </div>
@@ -153,29 +156,29 @@ export default function Sidebar() {
         <div style={{
           background: 'var(--bg-tertiary)',
           borderRadius: 'var(--radius-md)',
-          padding: '16px',
+          padding: '14px',
           textAlign: 'center',
         }}>
           <div style={{
-            width: '48px',
-            height: '48px',
+            width: '40px',
+            height: '40px',
             borderRadius: '50%',
             background: 'var(--accent)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            margin: '0 auto 12px',
-            fontSize: '20px',
+            margin: '0 auto 10px',
+            fontSize: '16px',
           }}>
-            👤
+            AM
           </div>
-          <div style={{ fontWeight: 600, marginBottom: '4px' }}>Alexander Mercer</div>
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '12px' }}>Senior Property Consultant</div>
+          <div style={{ fontWeight: 600, marginBottom: '3px', fontSize: 13 }}>Alexander Mercer</div>
+          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px' }}>Senior Property Consultant</div>
           <button className="action-btn primary" style={{ width: '100%', justifyContent: 'center' }}>
-            📞 +31 20 555 0123
+            +31 20 555 0123
           </button>
-          <button className="action-btn" style={{ width: '100%', justifyContent: 'center', marginTop: '8px' }}>
-            ✉ Send Inquiry
+          <button className="action-btn" style={{ width: '100%', justifyContent: 'center', marginTop: '6px' }}>
+            Send Inquiry
           </button>
         </div>
       </div>

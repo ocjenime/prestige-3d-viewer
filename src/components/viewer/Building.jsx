@@ -14,22 +14,66 @@ function WindowRow({ width, z, y, buildingWidth, materialPreset, isNight }) {
   const count = Math.floor(buildingWidth / (windowWidth + gap))
   const startX = -(count * (windowWidth + gap)) / 2
 
-  const windowColor = isNight ? '#FFE4A0' : preset.glass
-
   return (
     <group position={[0, y, z]}>
       {Array.from({ length: count }, (_, i) => (
-        <mesh key={i} position={[startX + i * (windowWidth + gap) + windowWidth / 2, 0, 0]} castShadow>
-          <boxGeometry args={[windowWidth, windowHeight, 0.05]} />
-          <meshStandardMaterial
-            color={windowColor}
-            metalness={isNight ? 0 : 0.2}
-            roughness={isNight ? 0.3 : 0.1}
+        <mesh key={i} position={[startX + i * (windowWidth + gap) + windowWidth / 2, 0, 0]} castShadow receiveShadow>
+          <boxGeometry args={[windowWidth, windowHeight, 0.08]} />
+          <meshPhysicalMaterial
+            color={isNight ? '#FFD080' : preset.glass}
+            metalness={0.1}
+            roughness={0.02}
+            transmission={isNight ? 0 : 0.7}
+            thickness={0.5}
+            ior={1.5}
             transparent
-            opacity={isNight ? 0.95 : 0.6}
-            emissive={isNight ? '#FFE4A0' : '#000000'}
-            emissiveIntensity={isNight ? 0.3 : 0}
+            opacity={isNight ? 0.95 : 0.5}
+            envMapIntensity={2.0}
+            emissive={isNight ? '#FFD080' : '#000000'}
+            emissiveIntensity={isNight ? 0.5 : 0}
+            clearcoat={1.0}
+            clearcoatRoughness={0.05}
           />
+        </mesh>
+      ))}
+      {z > 0 && Array.from({ length: count }, (_, i) => (
+        <mesh
+          key={`frame-h-${i}`}
+          position={[startX + i * (windowWidth + gap) + windowWidth / 2, windowHeight / 2, 0.04]}
+        >
+          <boxGeometry args={[windowWidth + 0.06, 0.05, 0.06]} />
+          <meshStandardMaterial color="#2A2A2A" metalness={0.8} roughness={0.2} />
+        </mesh>
+      ))}
+      {z > 0 && Array.from({ length: count }, (_, i) => (
+        <mesh
+          key={`frame-v-${i}`}
+          position={[startX + i * (windowWidth + gap) + windowWidth / 2, 0, 0.04]}
+        >
+          <boxGeometry args={[0.05, windowHeight + 0.06, 0.06]} />
+          <meshStandardMaterial color="#2A2A2A" metalness={0.8} roughness={0.2} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+function Balcony({ width, depth, materialPreset }) {
+  const preset = materialPresets[materialPreset]
+  return (
+    <group>
+      <mesh position={[0, -0.02, depth / 2 + 0.4]} receiveShadow castShadow>
+        <boxGeometry args={[width * 0.85, 0.12, 0.8]} />
+        <meshPhysicalMaterial color="#D0D0D0" roughness={0.4} metalness={0.1} clearcoat={0.3} clearcoatRoughness={0.4} />
+      </mesh>
+      <mesh position={[0, 0.4, depth / 2 + 0.8]} castShadow>
+        <boxGeometry args={[width * 0.85, 0.85, 0.04]} />
+        <meshPhysicalMaterial color="#88BBDD" metalness={0.05} roughness={0.05} transmission={0.6} thickness={0.3} ior={1.5} transparent opacity={0.4} clearcoat={1.0} clearcoatRoughness={0.05} />
+      </mesh>
+      {[-1, 0, 1].map(i => (
+        <mesh key={i} position={[i * (width * 0.85) / 2, 0.2, depth / 2 + 0.8]} castShadow>
+          <boxGeometry args={[0.06, 0.8, 0.06]} />
+          <meshStandardMaterial color="#444444" metalness={0.7} roughness={0.3} />
         </mesh>
       ))}
     </group>
@@ -59,6 +103,8 @@ function Floor({ level, width, depth, materialPreset, isNight, isSelected }) {
     document.body.style.cursor = 'default'
   }, [])
 
+  const showBalcony = level > 0 && level % 3 === 0
+
   return (
     <group position={[0, y, 0]}>
       <mesh
@@ -68,10 +114,13 @@ function Floor({ level, width, depth, materialPreset, isNight, isSelected }) {
         onPointerOut={handlePointerOut}
       >
         <boxGeometry args={[width, floorHeight - 0.05, depth]} />
-        <meshStandardMaterial
+        <meshPhysicalMaterial
           color={buildingColor}
-          roughness={0.85}
-          metalness={0.05}
+          roughness={preset.wallRoughness ?? 0.6}
+          metalness={preset.wallMetalness ?? 0.02}
+          clearcoat={preset.clearcoat ?? 0.2}
+          clearcoatRoughness={0.4}
+          envMapIntensity={1.0}
         />
       </mesh>
 
@@ -92,11 +141,24 @@ function Floor({ level, width, depth, materialPreset, isNight, isSelected }) {
         isNight={isNight}
       />
 
+      {showBalcony && (
+        <Balcony width={width} depth={depth} materialPreset={materialPreset} />
+      )}
+
       {level % 5 === 0 && level > 0 && (
-        <mesh position={[0, -floorHeight / 2 + 0.05, 0]} castShadow>
-          <boxGeometry args={[width + 0.3, 0.15, depth + 0.3]} />
-          <meshStandardMaterial color={preset.accent} roughness={0.4} metalness={0.3} />
-        </mesh>
+        <group>
+          <mesh position={[0, -floorHeight / 2 + 0.05, 0]} castShadow receiveShadow>
+            <boxGeometry args={[width + 0.4, 0.2, depth + 0.4]} />
+            <meshPhysicalMaterial
+              color={preset.accent}
+              roughness={0.3}
+              metalness={0.4}
+              clearcoat={0.6}
+              clearcoatRoughness={0.2}
+              envMapIntensity={1.5}
+            />
+          </mesh>
+        </group>
       )}
     </group>
   )
@@ -114,6 +176,26 @@ function SelectionOutline({ width, height, depth }) {
   }, [width, height, depth])
 
   return <primitive object={obj} />
+}
+
+function RooftopDetails({ width, depth, isNight }) {
+  return (
+    <group position={[0, 0.2, 0]}>
+      <mesh position={[0, 0, 0]} castShadow>
+        <boxGeometry args={[width * 0.3, 0.6, depth * 0.3]} />
+        <meshPhysicalMaterial color="#666666" roughness={0.6} metalness={0.3} />
+      </mesh>
+      <mesh position={[width * 0.25, 0, -depth * 0.2]} castShadow>
+        <cylinderGeometry args={[0.3, 0.3, 1.0, 12]} />
+        <meshPhysicalMaterial color="#888888" roughness={0.3} metalness={0.6} clearcoat={0.5} />
+      </mesh>
+      {!isNight && (
+        <>
+          <pointLight position={[0, 0.5, 0]} intensity={0.1} color="#FFFFFF" distance={5} />
+        </>
+      )}
+    </group>
+  )
 }
 
 export default function Building({ building, index }) {
@@ -171,9 +253,15 @@ export default function Building({ building, index }) {
           )
         })}
 
-        <mesh position={[0, -0.5, 0]} receiveShadow>
+        <mesh position={[0, -0.5, 0]} receiveShadow castShadow>
           <boxGeometry args={[buildingConfig.width + 1, 1, buildingConfig.depth + 1]} />
-          <meshStandardMaterial color="#3A3A3A" roughness={0.9} metalness={0.1} />
+          <meshPhysicalMaterial
+            color="#3A3A3A"
+            roughness={0.7}
+            metalness={0.08}
+            clearcoat={0.15}
+            clearcoatRoughness={0.6}
+          />
         </mesh>
 
         {isSelected && (
@@ -185,6 +273,14 @@ export default function Building({ building, index }) {
             />
           </group>
         )}
+
+        <group position={[0, building.floors.length * 3.2 + 0.2, 0]}>
+          <RooftopDetails
+            width={buildingConfig.width}
+            depth={buildingConfig.depth}
+            isNight={isNightMode}
+          />
+        </group>
       </group>
     </group>
   )

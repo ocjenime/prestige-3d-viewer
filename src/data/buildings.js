@@ -84,10 +84,34 @@ export const buildings = [
 ]
 
 export const materialPresets = {
-  'modern-white': { name: 'Modern White', wall: '#F8F8F8', floor: '#E5E5E5', accent: '#1E293B', glass: '#87CEEB' },
-  'warm-stone': { name: 'Warm Stone', wall: '#D4C5A9', floor: '#C4B896', accent: '#8B7355', glass: '#A8D4E6' },
-  'dark-luxury': { name: 'Dark Luxury', wall: '#2C2C2C', floor: '#1A1A1A', accent: '#C9A84C', glass: '#4A6E8A' },
-  'marble-classic': { name: 'Marble Classic', wall: '#F0EDE8', floor: '#D6CFC3', accent: '#8B7D6B', glass: '#9AC4D8' },
-  'wood-natural': { name: 'Natural Wood', wall: '#C4A882', floor: '#A68B5B', accent: '#5C4033', glass: '#7DB8CC' },
-  'concrete-industrial': { name: 'Industrial', wall: '#9E9E9E', floor: '#757575', accent: '#E65100', glass: '#6BA3BE' },
+  'modern-white': {
+    name: 'Modern White',
+    wall: '#F2F0ED', floor: '#E8E4DD', accent: '#1E293B', glass: '#B8D8EA',
+    wallRoughness: 0.35, wallMetalness: 0.02, clearcoat: 0.4,
+  },
+  'warm-stone': {
+    name: 'Warm Stone',
+    wall: '#D4C5A9', floor: '#C4B896', accent: '#8B7355', glass: '#A8D4E6',
+    wallRoughness: 0.65, wallMetalness: 0.01, clearcoat: 0.15,
+  },
+  'dark-luxury': {
+    name: 'Dark Luxury',
+    wall: '#1A1A1A', floor: '#111111', accent: '#C9A84C', glass: '#4A6E8A',
+    wallRoughness: 0.25, wallMetalness: 0.15, clearcoat: 0.7,
+  },
+  'marble-classic': {
+    name: 'Marble Classic',
+    wall: '#F0EDE8', floor: '#D6CFC3', accent: '#8B7D6B', glass: '#9AC4D8',
+    wallRoughness: 0.15, wallMetalness: 0.05, clearcoat: 0.8,
+  },
+  'wood-natural': {
+    name: 'Natural Wood',
+    wall: '#C4A882', floor: '#A68B5B', accent: '#5C4033', glass: '#7DB8CC',
+    wallRoughness: 0.75, wallMetalness: 0.0, clearcoat: 0.1,
+  },
+  'concrete-industrial': {
+    name: 'Industrial',
+    wall: '#8A8A8A', floor: '#666666', accent: '#E65100', glass: '#6BA3BE',
+    wallRoughness: 0.85, wallMetalness: 0.0, clearcoat: 0.05,
+  },
 }

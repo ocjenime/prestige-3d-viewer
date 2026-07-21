@@ -10,6 +10,7 @@ import BuildingInfo from './components/ui/BuildingInfo'
 import LoadingScreen from './components/ui/LoadingScreen'
 import Tooltip3D from './components/ui/Tooltip3D'
 import TourIndicator from './components/ui/TourIndicator'
+import { WebGLErrorBoundary } from './components/ui/WebGLErrorBoundary'
 
 export default function App() {
   const [loaded, setLoaded] = useState(false)
@@ -18,35 +19,45 @@ export default function App() {
   const tourMode = useStore((s) => s.tourMode)
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoaded(true), 2000)
+    const timer = setTimeout(() => setLoaded(true), 1800)
     return () => clearTimeout(timer)
   }, [])
 
   if (!loaded) return <LoadingScreen />
 
   return (
-    <div className="app-container">
-      <div className="canvas-container">
-        <Canvas
-          shadows
-          camera={{ position: [18, 12, 18], fov: 50 }}
-          gl={{ antialias: true, alpha: false }}
-          dpr={[1, 2]}
-        >
-          <Suspense fallback={null}>
-            <Scene />
-          </Suspense>
-        </Canvas>
+    <WebGLErrorBoundary>
+      <div className="app-container">
+        <div className="canvas-container">
+          <Canvas
+            shadows
+            camera={{ position: [18, 12, 18], fov: 50, near: 0.1, far: 200 }}
+            gl={{
+              antialias: true,
+              alpha: false,
+              powerPreference: 'high-performance',
+              stencil: false,
+            }}
+            dpr={[1, 1.5]}
+            onCreated={({ gl }) => {
+              gl.setClearColor('#F0F0F0')
+            }}
+          >
+            <Suspense fallback={null}>
+              <Scene />
+            </Suspense>
+          </Canvas>
 
-        <TopBar />
-        <Toolbar />
-        <BuildingSelector />
-        {showBuildingInfo && <BuildingInfo />}
-        {hoveredUnit && <Tooltip3D />}
-        {tourMode && <TourIndicator />}
+          <TopBar />
+          <Toolbar />
+          <BuildingSelector />
+          {showBuildingInfo && <BuildingInfo />}
+          {hoveredUnit && <Tooltip3D />}
+          {tourMode && <TourIndicator />}
+        </div>
+
+        <Sidebar />
       </div>
-
-      <Sidebar />
-    </div>
+    </WebGLErrorBoundary>
   )
 }

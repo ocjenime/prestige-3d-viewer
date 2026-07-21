@@ -14,12 +14,14 @@ export default function BuildingInfo() {
         <button
           onClick={toggleBuildingInfo}
           style={{
-            background: 'none',
-            border: 'none',
+            background: 'var(--bg-tertiary)',
+            border: '1px solid var(--border)',
             color: 'var(--text-muted)',
             cursor: 'pointer',
-            fontSize: '18px',
-            padding: '4px',
+            fontSize: '14px',
+            padding: '4px 8px',
+            borderRadius: 'var(--radius-sm)',
+            transition: 'all 0.2s',
           }}
         >
           ✕

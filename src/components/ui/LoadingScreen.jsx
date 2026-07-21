@@ -6,19 +6,24 @@ export default function LoadingScreen() {
       <div className="brand-logo">A</div>
       <div style={{
         fontFamily: 'var(--font-display)',
-        fontSize: '26px',
+        fontSize: '28px',
         fontWeight: 600,
-        marginBottom: '8px',
+        marginBottom: '6px',
         letterSpacing: '-0.02em',
+        background: 'linear-gradient(135deg, #FFFFFF, #2563FF)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
       }}>
         ARILUX D.O.O. (ZAGRAD)
       </div>
       <div style={{
-        fontSize: '12px',
-        color: 'var(--text-muted)',
+        fontSize: '11px',
+        color: '#2563FF',
         textTransform: 'uppercase',
-        letterSpacing: '0.15em',
-        marginBottom: '32px',
+        letterSpacing: '0.2em',
+        marginBottom: '36px',
+        fontWeight: 600,
       }}>
         3D Prikaz Nekretnina
       </div>
@@ -28,7 +33,8 @@ export default function LoadingScreen() {
       <div style={{
         fontSize: '11px',
         color: 'var(--text-muted)',
-        marginTop: '16px',
+        marginTop: '18px',
+        fontWeight: 400,
       }}>
         Pripremamo vaše iskustvo...
       </div>

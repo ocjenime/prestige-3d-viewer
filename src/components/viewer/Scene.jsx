@@ -28,13 +28,13 @@ function Lights({ isNight }) {
           shadow-camera-bottom={-50}
           shadow-bias={-0.0004}
         />
-        <pointLight position={[-15, 12, -10]} intensity={1.5} color="#FFD080" distance={50} decay={2} />
-        <pointLight position={[15, 8, 12]} intensity={0.8} color="#5577CC" distance={40} decay={2} />
-        <pointLight position={[0, 2, -18]} intensity={0.5} color="#FFAA44" distance={35} decay={2} />
-        <pointLight position={[-30, 4, 5]} intensity={0.4} color="#FFD080" distance={25} decay={2} />
-        <pointLight position={[30, 4, -5]} intensity={0.4} color="#FFD080" distance={25} decay={2} />
-        <spotLight position={[-25, 30, 0]} angle={0.45} penumbra={0.9} intensity={1.2} color="#7788BB" castShadow distance={70} />
-        <spotLight position={[25, 25, 15]} angle={0.35} penumbra={0.8} intensity={0.6} color="#998866" distance={50} />
+        <pointLight position={[-15, 12, -10]} intensity={1.5} color="#88AAFF" distance={50} decay={2} />
+        <pointLight position={[15, 8, 12]} intensity={0.8} color="#4488FF" distance={40} decay={2} />
+        <pointLight position={[0, 2, -18]} intensity={0.5} color="#FF8833" distance={35} decay={2} />
+        <pointLight position={[-30, 4, 5]} intensity={0.4} color="#5588CC" distance={25} decay={2} />
+        <pointLight position={[30, 4, -5]} intensity={0.4} color="#5588CC" distance={25} decay={2} />
+        <spotLight position={[-25, 30, 0]} angle={0.45} penumbra={0.9} intensity={1.2} color="#3366AA" castShadow distance={70} />
+        <spotLight position={[25, 25, 15]} angle={0.35} penumbra={0.8} intensity={0.6} color="#667799" distance={50} />
       </>
     )
   }

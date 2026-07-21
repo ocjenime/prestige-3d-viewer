@@ -86,32 +86,32 @@ export const buildings = [
 export const materialPresets = {
   'modern-white': {
     name: 'Moderna Bijela',
-    wall: '#F2F0ED', floor: '#E8E4DD', accent: '#1E293B', glass: '#B8D8EA',
+    wall: '#F2F0ED', floor: '#E8E4DD', accent: '#2563FF', glass: '#B8D8EA',
     wallRoughness: 0.35, wallMetalness: 0.02, clearcoat: 0.4,
   },
   'warm-stone': {
     name: 'Topli Kamen',
-    wall: '#D4C5A9', floor: '#C4B896', accent: '#8B7355', glass: '#A8D4E6',
+    wall: '#D4C5A9', floor: '#C4B896', accent: '#FF6A1F', glass: '#A8D4E6',
     wallRoughness: 0.65, wallMetalness: 0.01, clearcoat: 0.15,
   },
   'dark-luxury': {
     name: 'Tamni Luksuz',
-    wall: '#1A1A1A', floor: '#111111', accent: '#C9A84C', glass: '#4A6E8A',
+    wall: '#1A1A1A', floor: '#111111', accent: '#3B82F6', glass: '#4A6E8A',
     wallRoughness: 0.25, wallMetalness: 0.15, clearcoat: 0.7,
   },
   'marble-classic': {
     name: 'Mramorna Klasika',
-    wall: '#F0EDE8', floor: '#D6CFC3', accent: '#8B7D6B', glass: '#9AC4D8',
+    wall: '#F0EDE8', floor: '#D6CFC3', accent: '#2563FF', glass: '#9AC4D8',
     wallRoughness: 0.15, wallMetalness: 0.05, clearcoat: 0.8,
   },
   'wood-natural': {
     name: 'Prirodno Drvo',
-    wall: '#C4A882', floor: '#A68B5B', accent: '#5C4033', glass: '#7DB8CC',
+    wall: '#C4A882', floor: '#A68B5B', accent: '#FF6A1F', glass: '#7DB8CC',
     wallRoughness: 0.75, wallMetalness: 0.0, clearcoat: 0.1,
   },
   'concrete-industrial': {
     name: 'Industrijski',
-    wall: '#8A8A8A', floor: '#666666', accent: '#E65100', glass: '#6BA3BE',
+    wall: '#8A8A8A', floor: '#666666', accent: '#FF6A1F', glass: '#6BA3BE',
     wallRoughness: 0.85, wallMetalness: 0.0, clearcoat: 0.05,
   },
 }

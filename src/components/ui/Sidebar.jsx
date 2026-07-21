@@ -80,15 +80,17 @@ export default function Sidebar() {
           <button
             style={{
               width: '100%',
-              padding: '6px',
-              marginTop: '6px',
+              padding: '7px',
+              marginTop: '8px',
               background: 'var(--bg-tertiary)',
               border: '1px solid var(--border)',
               borderRadius: 'var(--radius-sm)',
               color: 'var(--text-secondary)',
-              fontSize: '11px',
+              fontSize: '10px',
+              fontWeight: 500,
               cursor: 'pointer',
               fontFamily: 'var(--font-body)',
+              transition: 'all 0.2s',
             }}
             onClick={() => setShowAllFloors(!showAllFloors)}
           >
@@ -156,24 +158,27 @@ export default function Sidebar() {
         <div style={{
           background: 'var(--bg-tertiary)',
           borderRadius: 'var(--radius-md)',
-          padding: '14px',
+          padding: '16px',
           textAlign: 'center',
+          border: '1px solid var(--border)',
         }}>
           <div style={{
-            width: '40px',
-            height: '40px',
+            width: '42px',
+            height: '42px',
             borderRadius: '50%',
-            background: 'var(--accent)',
+            background: 'linear-gradient(135deg, var(--blue), var(--accent))',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 10px',
-            fontSize: '16px',
+            fontSize: '14px',
+            fontWeight: 700,
+            color: '#FFFFFF',
           }}>
             AM
           </div>
           <div style={{ fontWeight: 600, marginBottom: '3px', fontSize: 13 }}>Alexander Mercer</div>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px' }}>Viši Konsultant za Nekretnine</div>
+          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '12px' }}>Viši Konsultant za Nekretnine</div>
           <button className="action-btn primary" style={{ width: '100%', justifyContent: 'center' }}>
             +387 61 555 012
           </button>

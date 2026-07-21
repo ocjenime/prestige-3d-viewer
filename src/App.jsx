@@ -31,21 +31,21 @@ class ErrorBoundary extends Component {
           padding: '40px', textAlign: 'center',
         }}>
           <div style={{
-            width: 64, height: 64, background: '#C9A84C', borderRadius: 10,
+            width: 64, height: 64, background: 'linear-gradient(135deg, #2563FF, #FF6A1F)', borderRadius: 14,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 28, fontWeight: 700, marginBottom: 24,
+            fontSize: 28, fontWeight: 700, marginBottom: 24, color: '#fff',
           }}>A</div>
           <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, marginBottom: 12 }}>
             Greška 3D Prikazivača
           </h2>
-          <p style={{ color: '#A0A0A8', maxWidth: 400, lineHeight: 1.6, marginBottom: 8 }}>
+          <p style={{ color: '#8899B8', maxWidth: 400, lineHeight: 1.6, marginBottom: 8 }}>
             {this.state.error?.message || 'Došlo je do greške prilikom učitavanja 3D prikazivača.'}
           </p>
           <button
             onClick={() => window.location.reload()}
             style={{
-              padding: '12px 24px', background: '#C9A84C', color: '#0A0A0B',
-              border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600,
+              padding: '12px 28px', background: 'linear-gradient(135deg, #2563FF, #FF6A1F)', color: '#fff',
+              border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 600,
               cursor: 'pointer', fontFamily: "'Inter', sans-serif",
             }}
           >

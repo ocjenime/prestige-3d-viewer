@@ -26,8 +26,8 @@ export default function Tooltip3D() {
   return (
     <div style={{
       position: 'absolute',
-      right: '24px',
-      top: '80px',
+      right: '20px',
+      top: '68px',
       zIndex: 30,
     }}>
       <div className="tooltip-3d">
@@ -36,9 +36,9 @@ export default function Tooltip3D() {
             {(unitInfo.type || '').replace(/-/g, ' ')}
           </h4>
           <span style={{
-            fontSize: 10,
+            fontSize: 9,
             background: 'var(--bg-tertiary)',
-            padding: '2px 8px',
+            padding: '2px 7px',
             borderRadius: 4,
             color: 'var(--text-muted)',
             fontFamily: 'monospace',
@@ -55,7 +55,7 @@ export default function Tooltip3D() {
           marginTop: 8,
           padding: '4px 12px',
           borderRadius: 12,
-          fontSize: 11,
+          fontSize: 10,
           fontWeight: 600,
           textTransform: 'uppercase',
           letterSpacing: '0.05em',

@@ -17,7 +17,7 @@ export default function TopBar() {
 
       <div className="top-actions">
         <button className="action-btn" onClick={toggleSidebar}>
-          {sidebarOpen ? '▶ Sakrij Detalje' : '◀ Prikaži Detalje'}
+          {sidebarOpen ? 'Sakrij' : 'Detalji'}
         </button>
         <button className="action-btn primary">
           Zakaži Obilazak

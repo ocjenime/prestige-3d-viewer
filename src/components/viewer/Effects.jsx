@@ -6,17 +6,18 @@ export default function Effects({ isNight }) {
   return (
     <EffectComposer multisampling={4}>
       <Bloom
-        intensity={isNight ? 0.5 : 0.08}
-        luminanceThreshold={isNight ? 0.35 : 0.92}
+        intensity={isNight ? 0.4 : 0.06}
+        luminanceThreshold={isNight ? 0.4 : 0.92}
         luminanceSmoothing={0.85}
         mipmapBlur
-        radius={0.65}
+        radius={0.6}
+        tintIntensity={isNight ? 0.8 : 0}
       />
       <Vignette
         offset={0.35}
-        darkness={isNight ? 0.6 : 0.3}
+        darkness={isNight ? 0.55 : 0.25}
       />
-      <ChromaticAberration offset={[0.0004, 0.0004]} />
+      <ChromaticAberration offset={[0.00035, 0.00035]} />
       <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
     </EffectComposer>
   )

@@ -316,10 +316,10 @@ export default function GroundPlane() {
       <Fountain position={[0, 0, 12]} />
 
       {treeRow1.map((pos, i) => (
-        <Tree key={`t1-${i}`} position={pos} scale={0.9 + Math.random() * 0.3} />
+        <Tree key={`t1-${i}`} position={pos} scale={0.85 + (i % 5) * 0.08} />
       ))}
       {treeRow2.map((pos, i) => (
-        <Tree key={`t2-${i}`} position={pos} scale={0.9 + Math.random() * 0.3} />
+        <Tree key={`t2-${i}`} position={pos} scale={0.9 + (i % 4) * 0.1} />
       ))}
 
       <PalmTree position={[8, 0, 15]} />

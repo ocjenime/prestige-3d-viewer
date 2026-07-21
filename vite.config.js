@@ -1,17 +1,18 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-export default defineConfig({
-  plugins: [react()],
-  base: '/prestige-3d-viewer/',
-  build: {
-    cssCodeSplit: false,
-    rollupOptions: {
-      output: {
-        assetFileNames: 'assets/[name]-[hash][extname]',
-      }
+function removeCrossorigin() {
+  return {
+    name: 'remove-crossorigin',
+    transformIndexHtml(html) {
+      return html.replace(/ crossorigin(="[^"]*")?/g, '')
     }
-  },
+  }
+}
+
+export default defineConfig({
+  plugins: [react(), removeCrossorigin()],
+  base: '/prestige-3d-viewer/',
   server: {
     port: 3000,
     host: true

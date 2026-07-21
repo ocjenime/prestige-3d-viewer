@@ -69,7 +69,7 @@ function ThreeCanvas() {
       <div className="canvas-container">
         <Canvas
           shadows
-          camera={{ position: [45, 32, 45], fov: 40, near: 0.1, far: 500 }}
+          camera={{ position: [65, 45, 65], fov: 45, near: 0.1, far: 500 }}
           gl={{ antialias: true, alpha: false, powerPreference: 'default', toneMapping: 4, toneMappingExposure: 1.1 }}
           dpr={[1, 2]}
           onCreated={({ gl }) => {

@@ -8,7 +8,9 @@ export default function TopBar() {
   return (
     <div className="top-bar">
       <div className="brand">
-        <div className="brand-logo">A</div>
+        <div className="brand-logo">
+          <img src={`${import.meta.env.BASE_URL}logo-arilux.svg`} alt="ARILUX" />
+        </div>
         <div className="brand-text">
           <h1>ARILUX D.O.O. (ZAGRAD)</h1>
           <span>3D Prikaz Nekretnina</span>

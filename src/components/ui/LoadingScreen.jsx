@@ -3,7 +3,9 @@ import React from 'react'
 export default function LoadingScreen() {
   return (
     <div className="loading-screen">
-      <div className="brand-logo">A</div>
+      <div className="brand-logo">
+        <img src={`${import.meta.env.BASE_URL}logo-arilux.svg`} alt="ARILUX" />
+      </div>
       <div style={{
         fontFamily: 'var(--font-display)',
         fontSize: '28px',

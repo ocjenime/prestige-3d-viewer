@@ -104,6 +104,18 @@ function Floor({ level, width, depth, materialPreset, isNight, isSelected }) {
 
 const MemoFloor = React.memo(Floor)
 
+function SelectionOutline({ width, height, depth }) {
+  const obj = useMemo(() => {
+    const geo = new THREE.EdgesGeometry(
+      new THREE.BoxGeometry(width, height, depth)
+    )
+    const mat = new THREE.LineBasicMaterial({ color: '#C9A84C', transparent: true, opacity: 0.6 })
+    return new THREE.LineSegments(geo, mat)
+  }, [width, height, depth])
+
+  return <primitive object={obj} />
+}
+
 export default function Building({ building, index }) {
   const groupRef = useRef()
   const selectedBuilding = useStore((s) => s.selectedBuilding)
@@ -124,12 +136,6 @@ export default function Building({ building, index }) {
     return configs[building.id] || { width: 12, depth: 10, floors: 10 }
   }, [building.id])
 
-  const edgesGeo = useMemo(() => {
-    return new THREE.EdgesGeometry(
-      new THREE.BoxGeometry(buildingConfig.width + 0.5, building.floors.length * 3.2, buildingConfig.depth + 0.5)
-    )
-  }, [buildingConfig.width, buildingConfig.depth, building.floors.length])
-
   useFrame(() => {
     if (groupRef.current) {
       const targetScale = isSelected ? 1 : 0.95
@@ -145,6 +151,7 @@ export default function Building({ building, index }) {
   }, [index, isSelected, setSelectedBuilding, toggleBuildingInfo])
 
   const floorCount = isSelected ? building.floors.length : Math.min(4, building.floors.length)
+  const outlineHeight = building.floors.length * 3.2
 
   return (
     <group ref={groupRef} position={building.position}>
@@ -170,9 +177,13 @@ export default function Building({ building, index }) {
         </mesh>
 
         {isSelected && (
-          <lineSegments position={[0, (building.floors.length * 3.2) / 2, 0]} geometry={edgesGeo}>
-            <lineBasicMaterial color="#C9A84C" transparent opacity={0.6} />
-          </lineSegments>
+          <group position={[0, outlineHeight / 2, 0]}>
+            <SelectionOutline
+              width={buildingConfig.width + 0.5}
+              height={outlineHeight}
+              depth={buildingConfig.depth + 0.5}
+            />
+          </group>
         )}
       </group>
     </group>

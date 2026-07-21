@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { OrbitControls, Environment, ContactShadows, Sky, Stars } from '@react-three/drei'
+import { OrbitControls } from '@react-three/drei'
 import useStore from '../../stores/useStore'
 import { buildings } from '../../data/buildings'
 import Building from './Building'
@@ -10,41 +10,36 @@ export default function Scene() {
   const isNightMode = useStore((s) => s.isNightMode)
   const showMeasurements = useStore((s) => s.showMeasurements)
   const measurementPoints = useStore((s) => s.measurementPoints)
-  const controlsRef = useRef()
 
   return (
     <>
-      <color attach="background" args={[isNightMode ? '#0A0E1A' : '#F0F0F0']} />
+      <color attach="background" args={[isNightMode ? '#0A0E1A' : '#E8E8E8']} />
       <fog attach="fog" args={[isNightMode ? '#0A0E1A' : '#E8E8E8', 50, 100]} />
 
       {isNightMode ? (
         <>
-          <ambientLight intensity={0.15} color="#4A5568" />
+          <ambientLight intensity={0.2} color="#6B7AA1" />
           <directionalLight
             position={[10, 20, 10]}
-            intensity={0.4}
-            color="#6B7AA1"
+            intensity={0.5}
+            color="#8899BB"
             castShadow
-            shadow-mapSize={[1024, 1024]}
-            shadow-camera-near={0.5}
-            shadow-camera-far={80}
-            shadow-camera-left={-30}
-            shadow-camera-right={30}
-            shadow-camera-top={30}
-            shadow-camera-bottom={-30}
+            shadow-mapSize-width={1024}
+            shadow-mapSize-height={1024}
           />
-          <pointLight position={[-10, 15, -10]} intensity={0.5} color="#C9A84C" distance={40} />
-          <Stars radius={100} depth={50} count={2000} factor={4} saturation={0} fade speed={1} />
+          <pointLight position={[-10, 15, -10]} intensity={0.8} color="#C9A84C" distance={50} />
+          <pointLight position={[10, 5, 10]} intensity={0.3} color="#6B7AA1" distance={30} />
         </>
       ) : (
         <>
-          <ambientLight intensity={0.5} color="#F5F5F5" />
+          <ambientLight intensity={0.6} color="#FFFFFF" />
           <directionalLight
             position={[15, 25, 15]}
-            intensity={1.0}
+            intensity={1.2}
             color="#FFFFFF"
             castShadow
-            shadow-mapSize={[1024, 1024]}
+            shadow-mapSize-width={1024}
+            shadow-mapSize-height={1024}
             shadow-camera-near={0.5}
             shadow-camera-far={80}
             shadow-camera-left={-30}
@@ -52,8 +47,8 @@ export default function Scene() {
             shadow-camera-top={30}
             shadow-camera-bottom={-30}
           />
-          <directionalLight position={[-10, 10, -10]} intensity={0.2} color="#87CEEB" />
-          <Sky sunPosition={[100, 20, 100]} turbidity={0.3} rayleigh={0.5} />
+          <directionalLight position={[-10, 10, -10]} intensity={0.3} color="#87CEEB" />
+          <hemisphereLight args={['#87CEEB', '#E8E4DE', 0.3]} />
         </>
       )}
 
@@ -62,20 +57,12 @@ export default function Scene() {
       ))}
 
       <GroundPlane />
-      <ContactShadows
-        position={[0, -0.01, 0]}
-        opacity={isNightMode ? 0.3 : 0.2}
-        scale={50}
-        blur={2}
-        far={15}
-      />
 
       {showMeasurements && measurementPoints.length >= 2 && (
         <MeasurementLine points={measurementPoints} />
       )}
 
       <OrbitControls
-        ref={controlsRef}
         makeDefault
         minPolarAngle={0.2}
         maxPolarAngle={Math.PI / 2.1}
@@ -85,8 +72,6 @@ export default function Scene() {
         dampingFactor={0.05}
         target={[0, 5, 0]}
       />
-
-      <Environment preset="city" background={false} />
     </>
   )
 }

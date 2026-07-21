@@ -1,13 +1,36 @@
-import React from 'react'
-import { Grid } from '@react-three/drei'
+import React, { useMemo } from 'react'
+import * as THREE from 'three'
 import useStore from '../../stores/useStore'
+
+function SimpleGrid({ size = 100, divisions = 50, color = '#D5D0C8' }) {
+  const geometry = useMemo(() => {
+    const points = []
+    const half = size / 2
+    const step = size / divisions
+    for (let i = 0; i <= divisions; i++) {
+      const pos = -half + i * step
+      points.push(new THREE.Vector3(pos, 0, -half))
+      points.push(new THREE.Vector3(pos, 0, half))
+      points.push(new THREE.Vector3(-half, 0, pos))
+      points.push(new THREE.Vector3(half, 0, pos))
+    }
+    const geo = new THREE.BufferGeometry().setFromPoints(points)
+    return geo
+  }, [size, divisions])
+
+  return (
+    <lineSegments geometry={geometry}>
+      <lineBasicMaterial color={color} transparent opacity={0.3} />
+    </lineSegments>
+  )
+}
 
 export default function GroundPlane() {
   const isNightMode = useStore((s) => s.isNightMode)
 
   return (
-    <>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1, 0]} receiveShadow>
+    <group position={[0, -1, 0]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[200, 200]} />
         <meshStandardMaterial
           color={isNightMode ? '#0D1117' : '#E8E4DE'}
@@ -16,22 +39,11 @@ export default function GroundPlane() {
         />
       </mesh>
 
-      <Grid
-        position={[0, -0.99, 0]}
-        args={[200, 200]}
-        cellSize={2}
-        cellThickness={0.5}
-        cellColor={isNightMode ? '#1A2030' : '#D5D0C8'}
-        sectionSize={10}
-        sectionThickness={1}
-        sectionColor={isNightMode ? '#253040' : '#C0B8A8'}
-        fadeDistance={80}
-        fadeStrength={1.5}
-        followCamera={false}
-        infiniteGrid
-      />
+      <group rotation={[-Math.PI / 2, 0, 0]}>
+        <SimpleGrid size={100} divisions={50} color={isNightMode ? '#1A2030' : '#D5D0C8'} />
+      </group>
 
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-30, -0.98, 25]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-30, 0.02, 25]} receiveShadow>
         <planeGeometry args={[20, 40]} />
         <meshStandardMaterial
           color={isNightMode ? '#0A1520' : '#C8D8E8'}
@@ -39,6 +51,6 @@ export default function GroundPlane() {
           metalness={0.1}
         />
       </mesh>
-    </>
+    </group>
   )
 }

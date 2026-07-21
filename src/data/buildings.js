@@ -3,39 +3,39 @@ export const buildings = [
     id: 'tower-a',
     name: 'Azure Toranj',
     type: 'luksuzno-stambeni',
-    description: 'Luksuzni stambeni toranj od 25 spratova sa panoramskim pogledom na grad, prozorima od poda do plafona i vrhunskom završnom obradom.',
+    description: 'Luksuzni stambeni toranj od 10 spratova sa panoramskim pogledom na grad, prozorima od poda do plafona i vrhunskom završnom obradom.',
     stats: {
-      floors: 25,
-      units: 100,
-      totalArea: '45.000 m²',
-      priceRange: '€850.000 - €3.200.000',
+      floors: 10,
+      units: 40,
+      totalArea: '18.000 m²',
+      priceRange: '€450.000 - €1.200.000',
       completionDate: 'Q4 2027',
-      parkingSpaces: 150,
+      parkingSpaces: 60,
     },
     position: [0, 0, 0],
-    floors: Array.from({ length: 25 }, (_, i) => ({
-      level: i + 1,
-      name: i === 0 ? 'Prizemlje' : `Sprat ${i + 1}`,
-      units: i === 0
-        ? [
-            { id: `A-${i+1}-01`, type: 'lobi', area: '120 m²', price: '-', status: 'common', rooms: 0 },
-            { id: `A-${i+1}-02`, type: 'poslovni-prostor', area: '200 m²', price: '€1.500.000', status: 'available', rooms: 0 },
-          ]
-        : [
-            { id: `A-${i+1}-01`, type: 'penthouse', area: '280 m²', price: '€3.200.000', status: i < 3 ? 'available' : 'sold', rooms: 5, balcony: true },
-            { id: `A-${i+1}-02`, type: '3-sobni', area: '165 m²', price: '€1.450.000', status: Math.random() > 0.3 ? 'available' : 'reserved', rooms: 3, balcony: true },
-            { id: `A-${i+1}-03`, type: '2-sobni', area: '110 m²', price: '€850.000', status: Math.random() > 0.4 ? 'available' : 'sold', rooms: 2, balcony: true },
-            { id: `A-${i+1}-04`, type: '3-sobni', area: '155 m²', price: '€1.350.000', status: Math.random() > 0.5 ? 'available' : 'reserved', rooms: 3, balcony: false },
-          ],
-    })),
-    color: '#E8E8E8',
-    accentColor: '#2563EB',
+    floors: [
+      {
+        name: 'Prizemlje',
+        units: [
+          { id: 'A-G1', type: 'poslovni-prostor', area: '120 m²', rooms: 0, price: '€450.000', status: 'available', balcony: false },
+          { id: 'A-G2', type: 'poslovni-prostor', area: '95 m²', rooms: 0, price: '€380.000', status: 'available', balcony: false },
+        ],
+      },
+      ...Array.from({ length: 9 }, (_, i) => ({
+        name: `${i + 1}. Sprat`,
+        units: [
+          { id: `A-${i + 1}1`, type: 'trosobni-stan', area: '165 m²', rooms: 3, price: '€750.000', status: i < 3 ? 'sold' : 'available', balcony: true },
+          { id: `A-${i + 1}2`, type: 'dvosobni-stan', area: '110 m²', rooms: 2, price: '€450.000', status: i < 2 ? 'reserved' : 'available', balcony: true },
+        ],
+      })),
+    ],
+    colors: { wall: '#E8E8E8', accent: '#2563EB' },
   },
   {
     id: 'villa-b',
     name: 'Villa Meridian',
     type: 'ultra-luksuzna-vila',
-    description: 'Ekskluzivna kolekcija od 12 ultra-luksuznih vikendica uz vodu sa privatnim bazenima, pametnim kućnim sistemima i 24/7 concierge uslugom.',
+    description: 'Ultra-luksuzna vila sa tri nivoa, privatnim vrtom i panoramskim terasama.',
     stats: {
       floors: 3,
       units: 12,
@@ -44,42 +44,62 @@ export const buildings = [
       completionDate: 'Q2 2027',
       parkingSpaces: 36,
     },
-    position: [25, 0, 0],
-    floors: Array.from({ length: 3 }, (_, i) => ({
-      level: i + 1,
-      name: i === 0 ? 'Prizemlje' : i === 1 ? 'Prvi Sprat' : 'Krov',
-      units: [
-        { id: `B-${i+1}-01`, type: i === 0 ? 'vila-vrt' : i === 1 ? 'glavna-soba' : 'krovna-terasa', area: `${180 + i * 40} m²`, price: `€${4.5 + i * 2}M`, status: 'available', rooms: 4 + i },
-      ],
-    })),
-    color: '#F5F0E8',
-    accentColor: '#D97706',
+    position: [22, 0, 0],
+    floors: [
+      {
+        name: 'Prizemlje',
+        units: [
+          { id: 'V-G1', type: 'vrt-vila', area: '180 m²', rooms: 4, price: '€4.500.000', status: 'available', balcony: false },
+        ],
+      },
+      {
+        name: '1. Sprat',
+        units: [
+          { id: 'V-11', type: 'master-suita', area: '220 m²', rooms: 5, price: '€6.500.000', status: 'available', balcony: true },
+        ],
+      },
+      {
+        name: '2. Sprat',
+        units: [
+          { id: 'V-21', type: 'penthouse', area: '260 m²', rooms: 6, price: '€8.500.000', status: 'reserved', balcony: true },
+        ],
+      },
+    ],
+    colors: { wall: '#F5F0E8', accent: '#D97706' },
   },
   {
     id: 'complex-c',
     name: 'Horizon Kompleks',
-    type: 'mješovita-upotreba',
-    description: 'Prestižni mješoviti projekat koji kombinuje kancelarije klase A, luksuzne stanove i butik hotel sa krovnom ponudom.',
+    type: 'mjesovita-upotreba',
+    description: 'Moderan mješoviti kompleks sa kancelarijama, stanovima i poslovnim prostorima.',
     stats: {
-      floors: 18,
-      units: 65,
-      totalArea: '62.000 m²',
-      priceRange: '€600.000 - €5.000.000',
+      floors: 10,
+      units: 30,
+      totalArea: '12.000 m²',
+      priceRange: '€300.000 - €800.000',
       completionDate: 'Q1 2028',
-      parkingSpaces: 300,
+      parkingSpaces: 50,
     },
-    position: [-25, 0, 0],
-    floors: Array.from({ length: 18 }, (_, i) => ({
-      level: i + 1,
-      name: i === 0 ? 'Prizemlje' : i < 4 ? 'Komersalni' : i < 12 ? 'Kancelarije' : 'Stanovi',
-      units: [
-        { id: `C-${i+1}-01`, type: 'komersalni', area: `${300 - i * 5} m²`, price: '€2.100.000', status: 'available', rooms: 0 },
-        { id: `C-${i+1}-02`, type: 'kancelarija', area: `${200 + i * 10} m²`, price: '€1.800.000', status: 'available', rooms: 0 },
-        { id: `C-${i+1}-03`, type: '2-sobni', area: '120 m²', price: '€920.000', status: 'available', rooms: 2 },
-      ],
-    })),
-    color: '#1E293B',
-    accentColor: '#10B981',
+    position: [-22, 0, 0],
+    floors: [
+      {
+        name: 'Prizemlje',
+        units: [
+          { id: 'H-G1', type: 'poslovni-prostor', area: '300 m²', rooms: 0, price: '€800.000', status: 'available', balcony: false },
+          { id: 'H-G2', type: 'poslovni-prostor', area: '200 m²', rooms: 0, price: '€550.000', status: 'available', balcony: false },
+          { id: 'H-G3', type: 'poslovni-prostor', area: '150 m²', rooms: 0, price: '€400.000', status: 'sold', balcony: false },
+        ],
+      },
+      ...Array.from({ length: 9 }, (_, i) => ({
+        name: `${i + 1}. Sprat`,
+        units: [
+          { id: `H-${i + 1}1`, type: 'kancelarija', area: '180 m²', rooms: 0, price: '€500.000', status: i < 2 ? 'sold' : 'available', balcony: false },
+          { id: `H-${i + 1}2`, type: 'kancelarija', area: '120 m²', rooms: 0, price: '€350.000', status: i < 1 ? 'reserved' : 'available', balcony: false },
+          { id: `H-${i + 1}3`, type: 'dvosobni-stan', area: '95 m²', rooms: 2, price: '€300.000', status: 'available', balcony: true },
+        ],
+      })),
+    ],
+    colors: { wall: '#1E293B', accent: '#10B981' },
   },
 ]
 

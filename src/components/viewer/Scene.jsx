@@ -106,11 +106,11 @@ export default function Scene() {
         makeDefault
         minPolarAngle={0.15}
         maxPolarAngle={Math.PI / 2.1}
-        minDistance={20}
-        maxDistance={120}
+        minDistance={15}
+        maxDistance={100}
         enableDamping
         dampingFactor={0.04}
-        target={[0, 6, 0]}
+        target={[0, 8, 0]}
       />
 
       <Effects isNight={isNightMode} />

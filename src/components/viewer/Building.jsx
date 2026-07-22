@@ -38,7 +38,7 @@ function WindowPane({ x, y, z, w, h, isNight, glass, windowId, unitStatus, isUni
     setHoveredUnit(null)
   }, [setHoveredUnit])
 
-  const emissiveColor = isNight ? '#FFD080' : (isSelected ? '#C9A84C' : (hovered ? '#C9A84C' : '#000000'))
+  const emissiveColor = isNight ? '#FFD080' : (isSelected ? '#2563FF' : (hovered ? '#2563FF' : '#000000'))
   const emissiveStrength = isNight ? 0.6 : (isSelected ? 0.3 : (hovered ? 0.15 : 0))
 
   return (
@@ -156,13 +156,15 @@ function Balcony({ x, width, materialPreset }) {
   )
 }
 
-function Floor({ level, width, depth, materialPreset, isNight, buildingData }) {
+function Floor({ level, width, depth, materialPreset, isNight, buildingData, buildingIndex }) {
   const preset = materialPresets[materialPreset]
   const floorHeight = 3.2
   const y = level * floorHeight
   const selectedFloor = useStore((s) => s.selectedFloor)
   const setSelectedFloor = useStore((s) => s.setSelectedFloor)
-  const isHighlighted = selectedFloor === level
+  const selectedBuilding = useStore((s) => s.selectedBuilding)
+  const setSelectedBuilding = useStore((s) => s.setSelectedBuilding)
+  const isHighlighted = selectedBuilding === buildingIndex && selectedFloor === level
 
   const buildingColor = useMemo(() => {
     if (isHighlighted) return preset.accent
@@ -171,10 +173,15 @@ function Floor({ level, width, depth, materialPreset, isNight, buildingData }) {
 
   const handleClick = useCallback((e) => {
     e.stopPropagation()
-    setSelectedFloor(selectedFloor === level ? null : level)
-  }, [level, selectedFloor, setSelectedFloor])
+    if (selectedBuilding !== buildingIndex) {
+      setSelectedBuilding(buildingIndex)
+      setSelectedFloor(level)
+    } else {
+      setSelectedFloor(selectedFloor === level ? null : level)
+    }
+  }, [level, selectedFloor, selectedBuilding, buildingIndex, setSelectedFloor, setSelectedBuilding])
 
-  const showBalcony = level > 0 && (level % 3 === 0 || level % 5 === 0)
+  const showBalcony = level > 0
   const balconySpacing = width / 4
 
   return (
@@ -238,7 +245,7 @@ function Floor({ level, width, depth, materialPreset, isNight, buildingData }) {
       {isHighlighted && (
         <mesh position={[0, -floorHeight / 2 - 0.02, depth / 2 + 0.03]}>
           <planeGeometry args={[width, floorHeight - 0.06]} />
-          <meshBasicMaterial color="#C9A84C" transparent opacity={0.06} side={THREE.DoubleSide} />
+          <meshBasicMaterial color={preset.accent} transparent opacity={0.08} side={THREE.DoubleSide} />
         </mesh>
       )}
     </group>
@@ -316,6 +323,7 @@ export default function Building({ building, index }) {
             materialPreset={materialPreset}
             isNight={isNightMode}
             buildingData={building}
+            buildingIndex={index}
           />
         ))}
 
@@ -330,7 +338,7 @@ export default function Building({ building, index }) {
           />
         </mesh>
 
-        <group position={[0, building.floors.length * 3.2, 0]}>
+        <group position={[0, building.floors.length * 3.2 - 1.6, 0]}>
           <RooftopDetails
             width={buildingConfig.width}
             depth={buildingConfig.depth}

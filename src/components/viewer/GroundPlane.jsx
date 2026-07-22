@@ -41,6 +41,163 @@ function Road({ position, width, length, rotation = 0 }) {
   )
 }
 
+function Walkway({ position, width = 3, length = 10 }) {
+  const seams = Math.floor(length / 1.5)
+  return (
+    <group position={position}>
+      <mesh position={[0, 0.035, 0]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[width, length]} />
+        <meshStandardMaterial color="#D8D0C0" roughness={0.75} />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <mesh key={s} position={[s * (width / 2 - 0.07), 0.05, 0]} receiveShadow>
+          <boxGeometry args={[0.14, 0.05, length]} />
+          <meshStandardMaterial color="#8A8078" roughness={0.7} />
+        </mesh>
+      ))}
+      {Array.from({ length: seams }, (_, i) => (
+        <mesh key={i} position={[0, 0.04, -length / 2 + i * 1.5 + 0.75]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[width - 0.3, 0.03]} />
+          <meshStandardMaterial color="#B0A898" roughness={0.8} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+function EntranceCanopy({ position, width = 4 }) {
+  return (
+    <group position={position}>
+      <mesh position={[0, 3.15, 0.85]} castShadow>
+        <boxGeometry args={[width, 0.08, 1.7]} />
+        <meshPhysicalMaterial color="#A8CCDD" metalness={0.1} roughness={0.08} transmission={0.6} thickness={0.2} transparent opacity={0.55} clearcoat={0.9} />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <mesh key={s} position={[s * (width / 2 - 0.25), 1.55, 1.45]} castShadow>
+          <cylinderGeometry args={[0.05, 0.05, 3.1, 8]} />
+          <meshStandardMaterial color="#2A2A2E" metalness={0.8} roughness={0.25} />
+        </mesh>
+      ))}
+      <mesh position={[0, 1.35, 0.06]}>
+        <planeGeometry args={[2.2, 2.7]} />
+        <meshPhysicalMaterial color="#1A2830" metalness={0.3} roughness={0.1} clearcoat={0.8} />
+      </mesh>
+      <mesh position={[0, 1.35, 0.075]}>
+        <planeGeometry args={[0.04, 2.7]} />
+        <meshStandardMaterial color="#555B60" metalness={0.7} roughness={0.3} />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <group key={s} position={[s * (width / 2 + 0.6), 0, 1.1]}>
+          <mesh position={[0, 0.3, 0]} castShadow>
+            <boxGeometry args={[0.9, 0.6, 0.9]} />
+            <meshStandardMaterial color="#8A7A6A" roughness={0.8} />
+          </mesh>
+          <mesh position={[0, 0.85, 0]} castShadow>
+            <sphereGeometry args={[0.55, 8, 6]} />
+            <meshStandardMaterial color="#2A7A22" roughness={0.85} />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  )
+}
+
+function ParkingRamp({ position, width = 4, length = 9, depth = 3, isNight }) {
+  const slopeLen = Math.sqrt(length * length + depth * depth)
+  const alpha = Math.atan2(depth, length)
+
+  const sideShape = useMemo(() => {
+    const s = new THREE.Shape()
+    s.moveTo(0, 0)
+    s.lineTo(length, 0)
+    s.lineTo(length, -depth)
+    s.closePath()
+    return s
+  }, [length, depth])
+
+  const sideGeo = useMemo(() => new THREE.ShapeGeometry(sideShape), [sideShape])
+
+  return (
+    <group position={position}>
+      {/* Prilazna ploca (apron) od trotoara do rampe */}
+      <mesh position={[0, 0.025, length / 2 + 2]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[width + 0.6, 4]} />
+        <meshStandardMaterial color="#3F3F3F" roughness={0.92} />
+      </mesh>
+
+      {/* Kosina rampe */}
+      <mesh position={[0, -depth / 2 + 0.02, 0]} rotation={[-Math.PI / 2 - alpha, 0, 0]} receiveShadow>
+        <planeGeometry args={[width, slopeLen]} />
+        <meshStandardMaterial color="#4A4A4A" roughness={0.9} />
+      </mesh>
+
+      {/* Vodici na kosini */}
+      {[-1, 1].map((s) => (
+        <mesh key={s} position={[s * (width / 2 - 0.15), -depth / 2 + 0.06, 0]} rotation={[-alpha, 0, 0]}>
+          <boxGeometry args={[0.12, 0.02, slopeLen - 0.3]} />
+          <meshStandardMaterial color="#D8D0C0" roughness={0.7} />
+        </mesh>
+      ))}
+
+      {/* Bocni zidovi rova (trougaoni) */}
+      {[-1, 1].map((s) => (
+        <mesh key={s} geometry={sideGeo} position={[s * (width / 2 - 0.02), 0, length / 2]} rotation={[0, Math.PI / 2, 0]}>
+          <meshStandardMaterial color="#9A9288" roughness={0.85} side={THREE.DoubleSide} />
+        </mesh>
+      ))}
+
+      {/* Celnji zid sa garaznim vratima */}
+      <mesh position={[0, -(depth + 0.2) / 2, -length / 2 - 0.13]}>
+        <boxGeometry args={[width + 0.3, depth + 0.2, 0.26]} />
+        <meshStandardMaterial color="#8A8278" roughness={0.85} />
+      </mesh>
+      <mesh position={[0, -depth + 1.2, -length / 2 + 0.02]}>
+        <planeGeometry args={[width - 0.8, 2.3]} />
+        <meshStandardMaterial color="#101014" metalness={0.6} roughness={0.4} />
+      </mesh>
+      {[-0.5, 0.1, 0.7].map((dy, i) => (
+        <mesh key={i} position={[0, -depth + 1.2 + dy, -length / 2 + 0.035]}>
+          <planeGeometry args={[width - 0.8, 0.05]} />
+          <meshStandardMaterial color="#3A3A40" metalness={0.5} roughness={0.5} />
+        </mesh>
+      ))}
+
+      {/* Svjetlo iznad vrata */}
+      <mesh position={[0, -0.25, -length / 2 + 0.05]}>
+        <boxGeometry args={[1.2, 0.08, 0.06]} />
+        <meshStandardMaterial color="#FFE8B0" emissive="#FFE8B0" emissiveIntensity={isNight ? 2.5 : 0.4} />
+      </mesh>
+      {isNight && (
+        <pointLight position={[0, -0.5, -length / 2 + 1]} intensity={0.8} color="#FFE8B0" distance={8} decay={2} />
+      )}
+
+      {/* Rubnjaci uz ivice rova */}
+      {[-1, 1].map((s) => (
+        <mesh key={s} position={[s * (width / 2 + 0.13), 0.15, -0.25]} castShadow>
+          <boxGeometry args={[0.25, 0.3, length - 0.5]} />
+          <meshStandardMaterial color="#A8A098" roughness={0.8} />
+        </mesh>
+      ))}
+
+      {/* Parking znak */}
+      <group position={[width / 2 + 1.1, 0, length / 2 - 0.9]}>
+        <mesh position={[0, 0.9, 0]} castShadow>
+          <cylinderGeometry args={[0.04, 0.04, 1.8, 6]} />
+          <meshStandardMaterial color="#4A4A4E" metalness={0.7} roughness={0.3} />
+        </mesh>
+        <mesh position={[0, 1.9, 0]} castShadow>
+          <boxGeometry args={[0.55, 0.55, 0.05]} />
+          <meshStandardMaterial color="#2563FF" roughness={0.4} />
+        </mesh>
+        <mesh position={[0, 1.9, 0.03]}>
+          <planeGeometry args={[0.3, 0.35]} />
+          <meshStandardMaterial color="#FFFFFF" roughness={0.5} />
+        </mesh>
+      </group>
+    </group>
+  )
+}
+
 function Tree({ position, scale = 1, variant = 0 }) {
   const trunkH = 2.5 + variant * 0.5
   const canopyR = 1.2 + variant * 0.3
@@ -158,8 +315,13 @@ function BosnianHouse({ position, width = 8, depth = 7, height = 3.5, wallColor 
         </group>
       ))}
 
-      <mesh position={[0, floors * floorH + roofH / 2, 0]} castShadow>
-        <coneGeometry args={[Math.max(width, depth) * 0.72, roofH, 4]} />
+      <mesh
+        position={[0, floors * floorH + roofH / 2, 0]}
+        rotation={[0, Math.PI / 4, 0]}
+        scale={[(width + 0.6) / Math.SQRT2, 1, (depth + 0.6) / Math.SQRT2]}
+        castShadow
+      >
+        <coneGeometry args={[1, roofH, 4]} />
         <meshStandardMaterial color={roofColor} roughness={0.65} metalness={0.05} />
       </mesh>
 
@@ -273,43 +435,6 @@ function GrassPatch({ position, width, length }) {
   )
 }
 
-function ParkingLot({ position, spots = 12, rotation = 0 }) {
-  const cols = Math.min(spots, 6)
-  const rows = Math.ceil(spots / cols)
-  const spotW = 2.8
-  const spotL = 5.0
-  const gap = 0.15
-  const totalW = cols * (spotW + gap)
-  const totalL = rows * (spotL + gap)
-
-  return (
-    <group position={position} rotation={[0, rotation, 0]}>
-      <mesh position={[0, 0.01, 0]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[totalW + 2, totalL + 2]} />
-        <meshStandardMaterial color="#3A3A3A" roughness={0.95} />
-      </mesh>
-      {Array.from({ length: spots }, (_, i) => {
-        const col = i % cols
-        const row = Math.floor(i / cols)
-        const x = -totalW / 2 + col * (spotW + gap) + spotW / 2
-        const z = -totalL / 2 + row * (spotL + gap) + spotL / 2
-        return (
-          <mesh key={i} position={[x, 0.015, z]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
-            <planeGeometry args={[spotW, spotL]} />
-            <meshStandardMaterial color="#4A4A4A" roughness={0.9} />
-          </mesh>
-        )
-      })}
-      {Array.from({ length: rows + 1 }, (_, i) => (
-        <mesh key={i} position={[0, 0.012, -totalL / 2 + i * (spotL + gap)]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[totalW, 0.06]} />
-          <meshStandardMaterial color="#FFFFFF" transparent opacity={0.35} />
-        </mesh>
-      ))}
-    </group>
-  )
-}
-
 function SmallShop({ position, width = 5, depth = 4, height = 3.2, wallColor = '#E8E4DD', signColor = '#2563FF', rotation = 0 }) {
   return (
     <group position={position} rotation={[0, rotation, 0]}>
@@ -325,8 +450,13 @@ function SmallShop({ position, width = 5, depth = 4, height = 3.2, wallColor = '
         <boxGeometry args={[width * 0.6, 0.4, 0.08]} />
         <meshStandardMaterial color={signColor} roughness={0.4} />
       </mesh>
-      <mesh position={[0, height + 1.2, 0]} castShadow>
-        <coneGeometry args={[Math.max(width, depth) * 0.7, 1.5, 4]} />
+      <mesh
+        position={[0, height + 1.25, 0]}
+        rotation={[0, Math.PI / 4, 0]}
+        scale={[(width + 0.4) / Math.SQRT2, 1, (depth + 0.4) / Math.SQRT2]}
+        castShadow
+      >
+        <coneGeometry args={[1, 1.5, 4]} />
         <meshStandardMaterial color="#B84030" roughness={0.7} />
       </mesh>
     </group>
@@ -336,39 +466,84 @@ function SmallShop({ position, width = 5, depth = 4, height = 3.2, wallColor = '
 export default function GroundPlane() {
   const isNightMode = useStore((s) => s.isNightMode)
 
+  const groundGeo = useMemo(() => {
+    const shape = new THREE.Shape()
+    shape.moveTo(-150, -150)
+    shape.lineTo(150, -150)
+    shape.lineTo(150, 150)
+    shape.lineTo(-150, 150)
+    shape.closePath()
+
+    const holes = [
+      [7, 11],    // Azure Toranj rampa: x 7..11
+      [30, 34],   // Villa Meridian rampa: x 30..34
+      [-13, -9],  // Horizon Kompleks rampa: x -13..-9
+    ]
+    holes.forEach(([x1, x2]) => {
+      const h = new THREE.Path()
+      h.moveTo(x1, -2)
+      h.lineTo(x2, -2)
+      h.lineTo(x2, -11)
+      h.lineTo(x1, -11)
+      h.closePath()
+      shape.holes.push(h)
+    })
+
+    return new THREE.ShapeGeometry(shape)
+  }, [])
+
   return (
     <group position={[0, -1, 0]}>
-      <mesh position={[0, -0.01, 0]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[300, 300]} />
+      <mesh geometry={groundGeo} position={[0, -0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <meshStandardMaterial color={isNightMode ? '#080C12' : '#6A9A50'} roughness={0.92} />
       </mesh>
 
       <GrassPatch position={[-10, 0, 0]} width={20} length={20} />
       <GrassPatch position={[10, 0, 0]} width={18} length={18} />
 
+      {/* Glavna ulica (istok-zapad) */}
       <Road position={[0, 0.03, 20]} width={7} length={120} />
-      <Road position={[-25, 0.03, 0]} width={5} length={100} rotation={Math.PI / 2} />
-      <Road position={[25, 0.03, 0]} width={5} length={100} rotation={Math.PI / 2} />
+      {/* Bocne ulice - ne dodiruju zgrade */}
+      <Road position={[39, 0.03, 0]} width={4} length={54} rotation={Math.PI / 2} />
+      <Road position={[-39, 0.03, 0]} width={4} length={54} rotation={Math.PI / 2} />
 
       <Sidewalk position={[0, 0.04, 16]} width={3} length={115} />
       <Sidewalk position={[0, 0.04, 24]} width={3} length={115} />
-      <Sidewalk position={[-22, 0.04, 0]} width={3} length={95} rotation={Math.PI / 2} />
-      <Sidewalk position={[22, 0.04, 0]} width={3} length={95} rotation={Math.PI / 2} />
 
-      <ParkingLot position={[35, 0, -12]} spots={12} />
-      <ParkingLot position={[-35, 0, -12]} spots={10} />
+      {/* Podzemni parking - rampa za svaku zgradu */}
+      <ParkingRamp position={[9, 0, 6.5]} isNight={isNightMode} />
+      <ParkingRamp position={[32, 0, 6.5]} isNight={isNightMode} />
+      <ParkingRamp position={[-11, 0, 6.5]} isNight={isNightMode} />
 
-      <SmallFountain position={[0, 0, 10]} />
+      {/* Pjesacki prilazi ulazima */}
+      <Walkway position={[0, 0, 10]} width={3} length={10} />
+      <Walkway position={[22, 0, 10.5]} width={3} length={9} />
+      <Walkway position={[-22, 0, 11]} width={3} length={8} />
 
-      <Tree position={[12, 0, 18]} scale={1.0} variant={0} />
-      <Tree position={[-12, 0, 18]} scale={0.9} variant={1} />
-      <Tree position={[20, 0, 18]} scale={1.1} variant={2} />
-      <Tree position={[-20, 0, 18]} scale={0.85} variant={3} />
-      <Tree position={[30, 0, 18]} scale={0.95} variant={0} />
-      <Tree position={[-30, 0, 18]} scale={1.0} variant={1} />
-      <Tree position={[-42, 0, 18]} scale={0.9} variant={2} />
-      <Tree position={[42, 0, 18]} scale={1.05} variant={0} />
+      {/* Nadstresnice i ulazna vrata */}
+      <EntranceCanopy position={[0, 0, 5]} width={4} />
+      <EntranceCanopy position={[22, 0, 6]} width={4} />
+      <EntranceCanopy position={[-22, 0, 7]} width={4} />
 
+      {/* Parkic sa fontanom */}
+      <SmallFountain position={[11, 0, -2]} />
+      <SmallBench position={[8, 0, -2]} rotation={-Math.PI / 2} />
+      <SmallBench position={[14, 0, -2]} rotation={Math.PI / 2} />
+      <SmallBench position={[11, 0, 2]} rotation={Math.PI} />
+      <SmallBench position={[4, 0, 10]} rotation={Math.PI} />
+      <SmallBench position={[-4, 0, 10]} rotation={Math.PI} />
+
+      {/* Drvece uz glavnu ulicu (juzna strana) */}
+      <Tree position={[12, 0, 26.5]} scale={1.0} variant={0} />
+      <Tree position={[-12, 0, 26.5]} scale={0.9} variant={1} />
+      <Tree position={[20, 0, 26.5]} scale={1.1} variant={2} />
+      <Tree position={[-20, 0, 26.5]} scale={0.85} variant={3} />
+      <Tree position={[30, 0, 26.5]} scale={0.95} variant={0} />
+      <Tree position={[-30, 0, 26.5]} scale={1.0} variant={1} />
+      <Tree position={[-46, 0, 26.5]} scale={0.9} variant={2} />
+      <Tree position={[46, 0, 26.5]} scale={1.05} variant={0} />
+
+      {/* Drvece sjeverna strana */}
       <Tree position={[10, 0, -16]} scale={0.95} variant={1} />
       <Tree position={[-10, 0, -16]} scale={1.0} variant={2} />
       <Tree position={[20, 0, -16]} scale={0.85} variant={3} />
@@ -376,17 +551,13 @@ export default function GroundPlane() {
       <Tree position={[35, 0, -16]} scale={1.0} variant={1} />
       <Tree position={[-35, 0, -16]} scale={0.95} variant={2} />
 
+      {/* Vocke */}
       <FruitTree position={[6, 0, 10]} />
       <FruitTree position={[-6, 0, 10]} />
-      <FruitTree position={[3, 0, -5]} />
-      <FruitTree position={[-3, 0, -5]} />
-      <FruitTree position={[15, 0, 5]} />
-      <FruitTree position={[-15, 0, 5]} />
-
-      <SmallBench position={[4, 0, 10]} />
-      <SmallBench position={[-4, 0, 10]} />
-      <SmallBench position={[8, 0, 7]} rotation={-Math.PI / 2} />
-      <SmallBench position={[-8, 0, 7]} rotation={Math.PI / 2} />
+      <FruitTree position={[4, 0, -9]} />
+      <FruitTree position={[-4, 0, -9]} />
+      <FruitTree position={[16, 0, 2]} />
+      <FruitTree position={[-13, 0, -3]} />
 
       <StreetLamp position={[4, 0, 16.5]} isNight={isNightMode} />
       <StreetLamp position={[-4, 0, 16.5]} isNight={isNightMode} />
@@ -399,14 +570,17 @@ export default function GroundPlane() {
       <Fence start={[-50, 28]} end={[50, 28]} posts={18} />
       <Fence start={[-50, -28]} end={[50, -28]} posts={18} />
 
+      {/* Kuce istocna strana */}
       <BosnianHouse position={[48, 0, 12]} width={7} depth={6} height={3.5} wallColor="#F0EDE8" roofColor="#C04020" />
       <BosnianHouse position={[48, 0, -2]} width={8} depth={7} height={6.5} wallColor="#E8E4DD" roofColor="#B83828" />
       <BosnianHouse position={[48, 0, -16]} width={7} depth={6} height={3.5} wallColor="#F5F0E8" roofColor="#C84830" />
 
+      {/* Kuce zapadna strana */}
       <BosnianHouse position={[-48, 0, 12]} width={8} depth={7} height={6.5} wallColor="#E8E0D4" roofColor="#B83828" />
       <BosnianHouse position={[-48, 0, -2]} width={7} depth={6} height={3.5} wallColor="#F0EDE8" roofColor="#C04020" />
       <BosnianHouse position={[-48, 0, -16]} width={9} depth={7} height={6.5} wallColor="#E4DCD0" roofColor="#A83020" />
 
+      {/* Kuce sjeverni red */}
       <BosnianHouse position={[10, 0, -35]} width={8} depth={7} height={6.5} wallColor="#F0EDE8" roofColor="#C04020" />
       <BosnianHouse position={[-10, 0, -35]} width={7} depth={6} height={3.5} wallColor="#E8E4DD" roofColor="#B83828" />
       <BosnianHouse position={[25, 0, -35]} width={9} depth={7} height={6.5} wallColor="#E8E0D4" roofColor="#C84830" />
@@ -414,12 +588,11 @@ export default function GroundPlane() {
       <BosnianHouse position={[40, 0, -35]} width={7} depth={6} height={3.5} wallColor="#E4DCD0" roofColor="#C04020" />
       <BosnianHouse position={[-40, 0, -35]} width={8} depth={7} height={6.5} wallColor="#E8E4DD" roofColor="#B83828" />
 
+      {/* Trgovine i kuce juzni red */}
       <SmallShop position={[55, 0, 38]} width={5} depth={4} height={3.2} signColor="#2563FF" />
       <SmallShop position={[-55, 0, 38]} width={5} depth={4} height={3.2} signColor="#FF6A1F" />
-
       <BosnianHouse position={[55, 0, 45]} width={7} depth={6} height={3.5} wallColor="#F0EDE8" roofColor="#C04020" rotation={Math.PI} />
       <BosnianHouse position={[-55, 0, 45]} width={8} depth={7} height={6.5} wallColor="#E8E0D4" roofColor="#B83828" rotation={Math.PI} />
-
       <BosnianHouse position={[60, 0, 15]} width={8} depth={7} height={6.5} wallColor="#E8E4DD" roofColor="#A83020" rotation={Math.PI / 2} />
       <BosnianHouse position={[-60, 0, 15]} width={7} depth={6} height={3.5} wallColor="#F5F0E8" roofColor="#C84830" rotation={-Math.PI / 2} />
 
